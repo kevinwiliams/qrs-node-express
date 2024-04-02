@@ -1,0 +1,39 @@
+<script src="/js/jquery-3.7.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (() => {
+        'use strict'
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })();
+</script>
+<script>
+    function isEmptyObject(obj) {
+        return Object.keys(obj).length === 0;
+    }
+
+    $(function () {
+        // Event listener for modal open event
+        $('#disputeDrawModal').on('shown.bs.modal', function () {
+            $('#disputePublicationDate').val($('#publicationDate').val());
+            $('#disputeDrawAmount').val($('#drawAmount').val());
+        });
+
+
+    });
+
+</script>

@@ -1,0 +1,81 @@
+<section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <!-- Display Company, Address, Retailer information here -->
+                            <h5 class="card-title mb-0">Account: {{AccountID}}</h5>
+                            <button type="button" class="btn btn-success btn-sm" name="getLatest" id="getLatest"><i class="bi bi-box-arrow-in-down"></i> Update Pubs</button>
+                            <button type="button" class="btn btn-info btn-sm" name="getLatestDraw" id="getLatestDraw"><i class="bi bi-box-arrow-in-down"></i> Update Draws</button>
+                        </div>
+                        <div class="row small mb-3">
+                        <div class="col-lg-9 col-md-8">
+                            {{Company}}<br>{{Address}}<br>{{Retailer}}
+                            <span class="visually-hidden" id="moreDetails" name="moreDetails">
+                                <br>{{Email}}<br> {{Phone}}
+                            </span>
+                        </div>
+                    </div>
+
+                        
+                        <table class="table table-hover table-striped small dtDistributions">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Publication Date</th>
+                                    <th class="text-center">Distribution Amount</th>
+                                    <th class="text-center">Return Amount</th>
+                                    <th class="text-center">Confirmed Amount</th>
+                                    <th class="text-center">Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each distributions}}
+                                <tr>
+                                    <td class="text-center">
+                                        {{#if (ne Status "Closed")}}
+                                            <a href="#" data-bs-toggle="modal" data-bs-target="#returnDataModal">
+                                                {{formatListDate PublicationDate}}
+                                            </a>
+                                        {{else}}
+                                            {{formatListDate PublicationDate}}
+                                        {{/if}}
+                                        <input type="hidden" name="PublicationDate" value="{{formatPubDate PublicationDate}}">
+                                        <input type="hidden" name="ReturnAmount" value="{{ReturnAmount}}">
+                                        <input type="hidden" name="ConfirmedAmount" value="{{ConfirmedAmount}}">
+                                        <input type="hidden" name="DistributionAmount" value="{{DistributionAmount}}">
+                                        <input type="hidden" name="IsDisputed" value="{{IsDisputed}}">
+                                    </td>
+                                    <td class="text-center">{{DistributionAmount}}</td>
+                                    <td class="text-center">{{ReturnAmount}}</td>
+                                    <td class="text-center">{{ConfirmedAmount}}</td>
+                                    <td class="text-center">
+                                        <span class="badge {{#if (eq Status "Closed")}}bg-danger{{else}}bg-success{{/if}}">{{Status}}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="/activity/history?id={{AccountID}}&pd={{formatDBDate PublicationDate}}"><i class="bi bi-clipboard"></i></a>
+                                    </td>
+                                </tr>
+                            {{/each}}
+
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <th colspan="5" style="text-align: right">Avg Returns:</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {{!-- Returns Modal --}}
+{{> distribution/_returnsModal}}
+{{!-- Submit Dispute Modal --}}
+{{> distribution/_disputeModal}}
+{{!-- Scripts --}}
+{{> distribution/accountScripts}}
+

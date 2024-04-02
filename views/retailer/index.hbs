@@ -1,0 +1,81 @@
+{{!-- index.hbs --}}
+
+{{!-- {{#each retailers}} --}}
+<div id="loadingScreen">
+    <!-- Loading screen content goes here -->
+    <div class="loader"></div>
+    <p>Loading...</p>
+</div>
+<section class="section dashboard">
+    <div class="row">
+        <div class="col-xxl-12 col-xl-12">
+
+            <div class="card info-card customers-card">
+                <div class="card-body">
+                    <h5 class="card-title">Retailers <span>| This Year</span></h5>
+
+                    <div class="d-flex align-items-center">
+                        <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div class="ps-3">
+                            <h6>{{circproUsers}}</h6>
+                            <span class="text-danger small pt-1 fw-bold d-none">12%</span> <span class="text-muted small pt-2 ps-1 d-none">decrease</span>
+                            <button class="btn btn-success btn-sm" id="getNewUser" name="getNewUser"><i class="bi bi-box-arrow-in-down"></i> Pull new users</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-lg-12">
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Agent List</h5>
+
+                    <table class="table table-hover table-striped small dtRetailers">
+                        <thead>
+                            <tr>
+                                <th>Account ID</th>
+                                <th>Distribution ID</th>
+                                <th>Retailer Name</th>
+                                <th>Company</th>
+                                <th>Retailer Address</th>
+                                <th>Phone Number</th>
+                                <th>Cell Number</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each retailers}}
+                            <tr>
+                                <td>
+                                    <a href="/distribution/account/{{AccountID}}" id="loadAccount" name="loadAccount">{{AccountID}}</a>
+                                </td>
+                                <td>{{DistributionID}}</td>
+                                <td>{{RetailerName}}</td>
+                                <td>{{Company}}</td>
+                                <td>{{RetailerAddress}}</td>
+                                <td>{{PhoneNumber}}</td>
+                                <td>{{CellNumber}}</td>
+                                <td>
+                                    <a href="/distribution/account/{{AccountID}}" id="loadAccount" name="loadAccount"><i class="bi bi-box-arrow-up-right"></i></a>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+
+                    <input type="hidden" name="maxDistId" id="maxDistId" value="{{maxDistId}}" />
+
+                    <!-- End Default Table Example -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<input type="hidden" name="error" id="error" value="{{error}}" />
+{{> retailer/scripts}}

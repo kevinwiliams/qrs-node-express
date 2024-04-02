@@ -1,0 +1,78 @@
+<script src="/js/jquery-3.7.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (() => {
+        'use strict'
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })();
+    </script>
+<script>
+    function isEmptyObject(obj) {
+        return Object.keys(obj).length === 0;
+    }
+
+    $(function () {
+        // Event listener for modal open event
+        $('#returnDataModal').on('shown.bs.modal', function () {
+            var disputed = $('#isDisputed').val();
+
+            if (disputed == "True") {
+                $('#disputeLlink').html('Already disputed');
+            } else {
+                $('#disputeLlink').html('Dispute');
+            }
+
+            // Fetch the PubDate dynamically
+            var pubDate = $('#publicationDate').val(); 
+            var formattedPubDate = encodeURIComponent(pubDate.replace(/\//g, '-'));
+            var url = '/activity/history?id={{AccountID}}';
+            url += '&pd=' + formattedPubDate; // Append the PubDate parameter to the URL
+
+            // Update the href attribute of the link with the dynamically generated URL
+            $('#historyLink').attr('href', url);
+
+             //Serialize the form datas.   
+            var returnsData = $("[name=returnForm] :input").serialize();
+            //console.log(returnsData);
+
+            $.ajax({
+                type: "POST",
+                url: "/activity/getlastentry",
+                dataType: 'json',
+                data: returnsData,
+                success: function (result) {
+                    //console.log(result);
+                    if (!isEmptyObject(result)) {
+                        // Show last update if found
+                        $('#historyData').show();
+
+                        $('#lastUpdate').html(result["LASTUPDATED"]);
+                        $('#lastRet').html(result["RETAMT"]);
+                        $('#lastUser').html(result["USER"]);
+                    } else {
+                        // Hide update box
+                        $('#historyData').hide();
+                    }
+                }
+            });
+        });
+
+       
+    });
+
+</script>

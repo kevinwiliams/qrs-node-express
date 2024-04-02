@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} - QRS Portal</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/sweetalert.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/site.css">
+    <link rel="stylesheet" href="/css/bootstrap-icons/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/boxicons/css/boxicons.min.css">
+    <link rel="stylesheet" href="/css/apexcharts/apexcharts.css">
+    <link rel="stylesheet" href="/css/simple-datatables/style.css?v=1.1">
+</head>
+<body class="{{asideClass}}">
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <div class="d-flex align-items-center justify-content-between">
+            <a href="{{homeUrl}}" class="logo d-flex align-items-center">
+                <img src="/img/logo.png" alt="">
+                <span class="d-none d-lg-block">QRS</span>
+            </a>
+            {{#if isAuthenticated}}
+                <i class="bi bi-list toggle-sidebar-btn"></i>
+            {{/if}}
+        </div><!-- End Logo -->
+
+        {{#if isAuthenticated}}
+            <nav class="header-nav ms-auto">
+                <ul class="d-flex align-items-center">
+                    <li class="nav-item dropdown pe-3">
+                        <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                            <img src="/img/profile-pic.jpg" alt="Profile" class="rounded-circle">
+                            <span class="d-none d-md-block dropdown-toggle ps-2">{{userName}}</span>
+                        </a><!-- End Profile Image Icon -->
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                            <li class="dropdown-header">
+                                <h6>{{userName}}</h6>
+                                <span>{{userRole}}</span>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="{{profileUrl}}">
+                                    <i class="bi bi-person"></i>
+                                    <span>My Profile</span>
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="{{accountSettingsUrl}}">
+                                    <i class="bi bi-gear"></i>
+                                    <span>Account Settings</span>
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                    <i class="bi bi-question-circle"></i>
+                                    <span>Need Help?</span>
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <form id="logoutForm" class="navbar-right" action="/account/logoff" method="post">
+                                    <input type="hidden" name="__RequestVerificationToken" value="{{antiForgeryToken}}">
+                                    <a class="dropdown-item d-flex align-items-center" href="javascript:document.getElementById('logoutForm').submit()">
+                                        <i class="bi bi-box-arrow-right"></i>
+                                        <span>Sign Out</span>
+                                    </a>
+                                </form>
+                            </li>
+                        </ul><!-- End Profile Dropdown Items -->
+                    </li><!-- End Profile Nav -->
+                </ul>
+            </nav><!-- End Icons Navigation -->
+        {{/if}}
+    </header><!-- End Header -->
+
+    {{#if isAuthenticated}}
+        <!-- ======= Sidebar ======= -->
+        <aside id="sidebar" class="sidebar">
+            <ul class="sidebar-nav" id="sidebar-nav">
+                {{#if isInRole "Circulation"}}
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="{{dashboardUrl}}">
+                            <i class="bi bi-grid"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="{{agentsUrl}}">
+                            <i class="bi bi-layout-text-window-reverse"></i>
+                            <span>Agents</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
+                            <i class="bi bi-clipboard2-data"></i><span>Reports</span><i class="bi bi-chevron-down ms-auto"></i>
+                        </a>
+                        <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav" style="">
+                            <li>
+                                <a class="nav-link collapsed" href="{{supervisorReportUrl}}">
+                                    <i class="bi bi-layout-text-window-reverse"></i>
+                                    <span>Supervisors</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="nav-link collapsed" href="{{transactionsReportUrl}}">
+                                    <i class="bi bi-layout-text-window-reverse"></i>
+                                    <span>Transactions</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                {{/if}}
+                {{#if isInRole "Retailer"}}
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="{{homeUrl}}">
+                            <i class="bi bi-grid"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                {{/if}}
+                {{#if isInRole "Supervisor"}}
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="{{retailerUrl}}">
+                            <i class="bi bi-grid"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                {{/if}}
+            </ul>
+        </aside><!-- End Sidebar -->
+    {{/if}}
+
+    <main id="main" class="main">
+        {{#if isAuthenticated}}
+            <div class="pagetitle">
+                <h1>{{title}}</h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{homeUrl}}">Home</a></li>
+                    </ol>
+                </nav>
+            </div><!-- End Page Title -->
+        {{/if}}
+
+        <section class="section">
+            {{{body}}}
+        </section>
+    </main><!-- End #main -->
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="footer">
+        <div class="copyright">
+            &copy; Copyright  {{currentYear}} <strong><span>Jamaica Observer Limited <br> QRS Portal</span></strong><br> All Rights Reserved
+        </div>
+    </footer><!-- End Footer -->
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <script src="/js/jquery-3.7.1.js"></script>
+    <script src="/js/moment.min.js"></script>
+    <script src="/js/bootstrap.bundle.js"></script>
+    <script src="/js/sweetalert.min.js"></script>
+    <script src="/css/simple-datatables/simple-datatables.js"></script>
+    <script src="/css/apexcharts/apexcharts.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/addons.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/v/bs5/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-html5-2.3.6/b-print-2.3.6/r-2.4.1/sb-1.4.2/sp-2.1.2/datatables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.js"></script>
+
+</body>
+</html>

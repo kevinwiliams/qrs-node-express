@@ -1,0 +1,102 @@
+<script src="/js/jquery-3.7.1.js"></script>
+<script src="/js/addons.js"></script>
+
+<script>
+    function ReloadPage() {
+        location.reload();
+    }
+
+    showLoadingScreen();
+
+    $('[name=loadAccount]').on('click', function (e) { showLoadingScreen(); });
+
+    $(document).ready(function () {
+        hideLoadingScreen();
+
+       $(window).on('pageshow', function (event) {
+            // Check if the event's persisted property is false
+            if (event.originalEvent.persisted) {
+                // This means the page is loaded from the cache
+                hideLoadingScreen();
+            }
+        });
+
+        var showError = $('#error').val();
+        if (showError) {
+            swal({
+                title: "Error!",
+                text: "No records found for the account",
+                type: "warning",
+                dangerMode: true
+            });
+
+            hideLoadingScreen();
+        }
+
+        console.log($('[name=error]').val())
+        $('.dtRetailers').DataTable({
+            fixedHeader: true,
+            order: [[0, 'desc']],
+            pageLength: 15,
+            lengthChange: false,
+            responsive: true,
+            dom: "<'row'<'col-sm-6'f>>" + // Place the search box in its own row and make it wider
+                 "<'row'<'col-sm-12'tr>>" + // Display the table in its own row
+                 "<'row'<'col-sm-5'i><'col-sm-7'p>>",
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 }, // Account
+                { responsivePriority: 2, targets: 2 }, // Name
+                { responsivePriority: 3, targets: 3 }, // Company
+                //{ responsivePriority: 3, targets: 8 }  // Action
+            ],
+            initComplete: function () {
+                // Add a class to the search label
+                $('.dataTables_filter label').addClass('form-label');                                                                                                                                                                                                                                                                                                       
+            }
+
+        });
+
+         $('[name=getNewUser]').click(function () {
+            var spinner = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+            $('[name=getNewUser]').html(spinner);
+            $('[name=getNewUser]').attr('disabled', true);
+
+            $.ajax({
+                    type: "POST",
+                    url: '@Url.Action("GetNewUsers", "retailer")',
+                    dataType: 'json',
+                data: {
+                    id: $('#maxDistId').val()
+                },
+                success: function (response) {
+                    //console.log(response);
+                     if (response.success) {
+                       //console.log(response.success);
+
+                        swal({
+                            title: "Success!",
+                            text: "Retailer list updated!",
+                            type: "success",
+                            dangerMode: false
+                        });
+
+                        setTimeout(
+                            ReloadPage
+                            , 2500);
+                    } else {
+                       swal({
+                            title: "Error!",
+                            text: "No new users found!",
+                            type: "warning",
+                            dangerMode: true
+                        });
+                    }
+
+
+                    }
+                });
+
+        });
+
+    });
+</script>
