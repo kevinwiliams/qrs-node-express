@@ -1,5 +1,4 @@
 <script src="/js/jquery-3.7.1.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 <script>
     // Example starter JavaScript for disabling form submissions if there are invalid fields
     (() => {
@@ -42,7 +41,6 @@
             var formattedPubDate = encodeURIComponent(pubDate.replace(/\//g, '-'));
             var url = '/activity/history?id={{AccountID}}';
             url += '&pd=' + formattedPubDate; // Append the PubDate parameter to the URL
-
             // Update the href attribute of the link with the dynamically generated URL
             $('#historyLink').attr('href', url);
 

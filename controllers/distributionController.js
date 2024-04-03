@@ -1,5 +1,7 @@
 const sequelize = require('../config/db').sequelize;
+const moment = require('moment');
 const CircProTranx = require('../models/CircProTransactions'); // Assuming you have defined the Sequelize models
+const QRSActivityLog = require('../models/QRSActivityLogs'); // Assuming you have defined the Sequelize models
 
 async function index(req, res) {
     try {
@@ -106,11 +108,13 @@ async function account(req, res) {
 async function updateReturns(req, res) {
     try {
         const { accountId, returnAmount, drawAmount, confirmAmount, publicationDate, loggedEmail, userRole } = req.body;
-        
-        // Add your validation logic here if necessary
-        
+        // Split the date string by "/"
+        const parts = publicationDate.split('/');
+
+        // Rearrange the parts into "YYYY-MM-DD" format
+        const splitDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
         // Parse publication date
-        const parsedPublicationDate = new Date(publicationDate);
+        const parsedPublicationDate = new Date(splitDate);
         
         // Update return amount in the database
         const pubEntry = await CircProTranx.findOne({ where: { AccountID: accountId, PublicationDate: parsedPublicationDate } });
@@ -121,8 +125,8 @@ async function updateReturns(req, res) {
             
             pubEntry.ReturnAmount = returnCount;
             pubEntry.Status = retStatus;
-            pubEntry.ReturnDate = new Date();
-            pubEntry.UpdatedAt = new Date();
+            pubEntry.ReturnDate = moment().format('YYYY-MM-DD HH:mm:ss');
+            pubEntry.UpdatedAt = moment().format('YYYY-MM-DD HH:mm:ss');
             
             // Determine if the confirm amount should be updated based on the user role
             if (userRole !== 'Retailer') {
@@ -130,7 +134,7 @@ async function updateReturns(req, res) {
                 returnCount = parseInt(confirmAmount, 10);
                 
                 pubEntry.ConfirmedAmount = returnCount;
-                pubEntry.ConfirmDate = new Date();
+                pubEntry.ConfirmDate = moment().format('YYYY-MM-DD HH:mm:ss');
                 pubEntry.Status = retStatus;
                 pubEntry.ConfirmReturn = true;
             }
@@ -139,9 +143,9 @@ async function updateReturns(req, res) {
             await pubEntry.save();
             
             // Send email notification
-            const subject = `QRS Returns Notification - ${accountId}`;
-            const body = await renderViewToString(req, res, 'Emails/ConfirmReturnRetailer', { distributionData: pubEntry });
-            const emailSent = await Util.sendMail(loggedEmail, subject, body);
+            //const subject = `QRS Returns Notification - ${accountId}`;
+            //const body = await renderViewToString(req, res, 'Emails/ConfirmReturnRetailer', { distributionData: pubEntry });
+            //const emailSent = await Util.sendMail(loggedEmail, subject, body);
             
             // Update activity logs
             const qRSActivityLog = new QRSActivityLog({
@@ -152,7 +156,8 @@ async function updateReturns(req, res) {
                 PublicationDate: parsedPublicationDate,
                 DistributionAmount: parseInt(drawAmount, 10),
                 ReturnAmount: returnCount,
-                Status: retStatus
+                Status: retStatus,
+                CreatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
             });
             await qRSActivityLog.save();
 

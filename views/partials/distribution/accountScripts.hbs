@@ -101,7 +101,7 @@
             let formData = $("[name=returnForm]").valid();
             let Url = $("[name=returnForm]").data("request-url");
             if (formData) {
-                //Serialize the form datas.   
+                //Serialize the form datas.   +
                 var returnsData = $("[name=returnForm] :input").serialize();
                 //console.log(returnsData);
                 $('#updateBtn').attr('disabled', true);
@@ -109,7 +109,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: Url,
+                    url: '/distribution/updatereturns',
                     dataType: 'json',
                     data: returnsData,
                     success: function (result) {

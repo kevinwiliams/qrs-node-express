@@ -1,5 +1,11 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db').sequelize;
+const Sequelize = require('sequelize');
+
+// Override timezone formatting for MSSQL
+Sequelize.DATE.prototype._stringify = function _stringify(date, options) {
+  return this._applyTimezone(date, options).format('YYYY-MM-DD HH:mm:ss.SSS');
+};
 
 const CircProTranx = sequelize.define('CircProTransactions', {
     CircProTranxID: {
@@ -24,7 +30,7 @@ const CircProTranx = sequelize.define('CircProTransactions', {
         allowNull: false,
     },
     PublicationDate: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false,
     },
     DistributionAmount: {
@@ -62,6 +68,7 @@ const CircProTranx = sequelize.define('CircProTransactions', {
     UpdatedAt: {
         type: DataTypes.DATE,
         allowNull: true,
+        defaultValue: DataTypes.NOW
     },
     IsDisputed: {
         type: DataTypes.BOOLEAN,
