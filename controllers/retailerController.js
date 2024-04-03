@@ -1,6 +1,8 @@
+const Util = require('../utils/utils'); // Import Util model
 const Retailer = require('../models/retailer'); // Import Retailer model
 const { CircproUsers } = require('../models/CircproUsers'); // Assuming you have defined the Sequelize model
 const sequelize = require('../config/db').sequelize;
+
 
 module.exports = {
     index: async (req, res) => {

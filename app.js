@@ -9,7 +9,7 @@ const moment = require('moment'); // Import moment for date formatting
 
 const app = express();
 // app.enable('view cache');
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const reduceOp = function(args, reducer){
     args = Array.from(args);

@@ -1,4 +1,4 @@
-{{#if qrsActivityLogs}}
+{{#if qRSActivityLogs}}
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
@@ -25,7 +25,7 @@
                                         <td>{{IPAddress}}</td>
                                         <td>{{UserName}}</td>
                                         <td>{{EmailAddress}}</td>
-                                        <td>{{formatDBDate PublicationDate}}</td>
+                                        <td>{{formatListDate PublicationDate}}</td>
                                         <td>{{DistributionAmount}}</td>
                                         <td>{{ReturnAmount}}</td>
                                         <td><span class="badge {{#if (eq Status "Closed")}}bg-danger{{else}}bg-success{{/if}}">{{Status}}</span></td>

@@ -123,10 +123,21 @@ function isLocal() {
     }
 }
 
+async function postRequest(url, data) {
+    try {
+        const response = await axios.post(url, data);
+        return response.data;
+    } catch (error) {
+        console.error('Error making POST request:', error);
+        throw error;
+    }
+}
+
 module.exports = {
     fileHelper,
     logError,
     logUserActivity,
     sendMail,
-    isLocal
+    isLocal,
+    postRequest
 };

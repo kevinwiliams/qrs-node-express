@@ -14,7 +14,7 @@ async function getLogs(req, res) {
         });
         res.render('activity/logs', { 
             layout: 'layout', // Specify the layout template
-            qRSActivityLogs: qRSActivityLogs, 
+            qRSActivityLogs: JSON.parse(JSON.stringify(qRSActivityLogs)), 
             ...userData 
         });
 
@@ -26,18 +26,20 @@ async function getLogs(req, res) {
 
 async function getHistory(req, res) {
     try {
+        console.log('Params:', req.query);
         const userData = getUserData(req);
-        const parsedPubDate = new Date(req.params.pd);
+        const parsedPubDate = new Date(req.query.pd);
         const qRSActivityLogs = await QRSActivityLogs.findAll({
             where: {
-                AccountID: req.params.id,
+                AccountID: req.query.id,
                 PublicationDate: parsedPubDate
             },
             order: [['CreatedAt', 'DESC']]
         });
+        console.log('qRSActivityLogs', qRSActivityLogs);
         res.render('activity/history', {
             layout: 'layout', // Specify the layout template
-            qRSActivityLogs : qRSActivityLogs, 
+            qRSActivityLogs : JSON.parse(JSON.stringify(qRSActivityLogs)), 
             publicationDate: parsedPubDate.toISOString(), 
             ...userData });
     } catch (error) {

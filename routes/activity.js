@@ -4,7 +4,7 @@ const activityController = require('../controllers/activityController');
 
 router.get('/', activityController.getIndex);
 router.get('/logs', activityController.getLogs);
-router.get('/history/:id/:pd', activityController.getHistory);
+router.get('/history', activityController.getHistory);
 router.post('/getlastentry', activityController.getLastEntry);
 
 module.exports = router;
