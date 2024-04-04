@@ -171,7 +171,6 @@ async function updateReturns(req, res) {
     }
 }
 
-
 async function submitDispute(req, res) {
     try {
         const { accountId, returnAmount, drawAmount, disputeAmount, publicationDate, loggedEmail, userRole, retailerNote } = req.body;
@@ -207,16 +206,12 @@ async function getLatest(req, res) {
         const { id } = req.body;
 
         // Fetch the latest transactions for the given accountId
-        const transactions = await CircProTranx.findAll({ 
-            where: { 
-                AccountID: id 
-            },
-            order: [['PublicationDate', 'DESC']],
-            limit: 1
-        });
+        const startDate = getLastDistDate(id);
+        const endDate = new Date();
+        const loadCircTranx = await loadTransactions(id, startDate, endDate);
 
         // Send the retrieved data as a response
-        res.status(200).json({ success: true, transactions });
+        res.status(200).json({ success: loadCircTranx });
     } catch (error) {
         console.error('Error getting latest:', error);
         res.status(500).json({ success: false, message: 'Internal Server Error' });
@@ -230,20 +225,9 @@ async function getLatestDraw(req, res) {
         // Fetch the latest draw transactions for the given accountId within the last 60 days
         const startDate = new Date(new Date() - 60 * 24 * 60 * 60 * 1000); // 60 days ago
         const endDate = new Date();
-
-        const drawTransactions = await CircProTranx.findAll({ 
-            where: { 
-                AccountID: id,
-                PublicationDate: { 
-                    [sequelize.Op.between]: [startDate, endDate] 
-                },
-                DistributionTypeID: 1 // Assuming DistributionTypeID 1 represents draw transactions
-            },
-            order: [['PublicationDate', 'DESC']]
-        });
-
+        const drawTransactions = await updateDistributions(id, startDate, endDate);
         // Send the retrieved data as a response
-        res.status(200).json({ success: true, drawTransactions });
+        res.status(200).json({ success: drawTransactions });
     } catch (error) {
         console.error('Error getting latest draw:', error);
         res.status(500).json({ success: false, message: 'Internal Server Error' });
@@ -276,6 +260,127 @@ function getLatestDistDate(accountID) {
     } catch (error) {
         console.error('Error getting last distribution date:', error);
         throw error;
+    }
+}
+
+async function loadTransactions(accountID, startDate, endDate) {
+    try {
+        // Define the URL of the API endpoint
+        const url = process.env.CIRC_PRO_API_LOAD_TRANX;
+
+        // Define the form data
+        const formData = {
+            account_id: accountID,
+            startDate: startDate,
+            endDate: endDate
+        };
+
+        // Send the POST request using axios
+        const response = await axios.post(url, formData);
+
+        // Check if the request was successful
+        if (response.status === 200) {
+            const resultTrans = response.data;
+
+            for (const item of resultTrans) {
+                // Assuming circUser is retrieved successfully using DistributionID
+                const circProTransactions = new CircProTranx({
+                    UserID: item.UserID,
+                    AccountID: item.DIST_ACCTNBR,
+                    PublicationDate: item.PUBLISH,
+                    ConfirmDate: item.PUBLISH,
+                    ConfirmedAmount: item.RETTOT,
+                    ConfirmReturn: true,
+                    CreatedAt: item.PUBLISH,
+                    UpdatedAt: new Date(),
+                    Status: (item.PUBLISH < Date.now() - 30 * 24 * 60 * 60 * 1000) ? "Closed" : "Open",
+                    EmailAddress: item.EmailAddress,
+                    ReturnAmount: item.RETTOT,
+                    ReturnDate: item.PUBLISH,
+                    DistributionAmount: item.DRAWTOT,
+                    DistributionTypeID: item.DISTRIBUTION_TYPE_ID
+                });
+
+                await circProTransactions.save();
+            }
+        return true;
+
+        }else{
+            return false;
+        }
+
+    } catch (error) {
+        console.error('Error loading transactions:', error);
+        throw new Error('Internal Server Error');
+    }
+}
+
+async function updateDistributions(accountID, startDate, endDate) {
+    try {
+        // Define the URL of the API endpoint
+        const url = process.env.CIRC_PRO_API_LOAD_TRANX;
+
+        // Define the form data
+        const formData = {
+            account_id: accountID,
+            startDate: startDate,
+            endDate: endDate
+        };
+
+        // Send the POST request using axios
+        const response = await axios.post(url, formData);
+
+        // Check if the request was successful
+        if (response.status === 200) {
+            const resultTrans = response.data;
+
+            for (const item of resultTrans) {
+                // Assuming circUser is retrieved successfully using DistributionID
+                const circProTransactions = await CircProTranx.findOne({
+                    where: {
+                        AccountID: accountID,
+                        PublicationDate: item.PUBLISH
+                    }
+                });
+
+                if (circProTransactions) {
+                    circProTransactions.DistributionAmount = item.DRAWTOT;
+                    await circProTransactions.save();
+                }
+            }
+            
+            return true;
+        }else{
+            return false;
+        }
+
+    } catch (error) {
+        console.error('Error updating distributions:', error);
+        throw new Error('Internal Server Error');
+    }
+}
+
+async function getLastDistDate(accountID) {
+    try {
+        // Find the most recent publication date for the given accountID
+        const result = await CircProTranx.findOne({
+            where: { AccountID: accountID },
+            order: [['PublicationDate', 'DESC']],
+            attributes: ['PublicationDate']
+        });
+
+        if (result) {
+            // If a result is found, add one day to the publication date
+            const lastDistDate = new Date(result.PublicationDate);
+            lastDistDate.setDate(lastDistDate.getDate() + 1);
+            return lastDistDate;
+        } else {
+            // If no result is found, return null or throw an error based on your requirement
+            return null;
+        }
+    } catch (error) {
+        console.error('Error getting last distribution date:', error);
+        throw new Error('Internal Server Error');
     }
 }
 
