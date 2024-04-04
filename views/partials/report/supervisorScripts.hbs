@@ -1,0 +1,96 @@
+<script src="/js/jquery-3.7.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
+<script>
+    $('[name=startDate]').change(function (e) {
+        var s = $(this).val();
+        var sDate = moment(s).format('LL');
+        $('#sDate').html(sDate);
+    });
+
+    $('[name=endDate]').change(function (e) {
+        var d = $(this).val();
+        var eDate = moment(d).format('LL');
+        $('#eDate').html(eDate);
+    });
+
+    // Submit form on button click
+    $('#filterBtn').click(function (e) {
+        e.preventDefault();
+        var startDate = $('[name=startDate]').val();
+        var endDate = $('[name=endDate]').val();
+
+        //if (startDate == '' || endDate == '') {
+        //    alert('Please select a start and end date.');
+        //    return false;
+        //}
+
+        if (moment(startDate).isAfter(endDate)) {
+            alert('The end date must be after the start date.');
+            return false;
+        }
+
+        // Submit form
+        $('[name=supervisorReport]').submit();
+    });
+
+    $(document).ready(function () {
+        $('.dtSupReport').DataTable({
+            //order: [[1, 'desc']],
+            pageLength: 30,
+            dom: '<"row pb-3"<"col-lg-6"B><"col-lg-6"f>>tip', // Customized layout for DataTable components
+            buttons: [
+                {
+                extend: 'excel',
+                exportOptions: {
+                    columns: ':visible'
+                }
+            },
+            {
+                extend: 'print',
+                exportOptions: {
+                    columns: ':visible',
+                    stripHtml: false // Include HTML content, like the footer, when printing
+                }
+            },
+                'colvis',
+            ],
+            footerCallback: function (row, data, start, end, display) {
+                var api = this.api(), data;
+
+                // Remove the formatting to get integer data for summation
+                var intVal = function (i) {
+                    return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+                };
+
+                // Total over all pages
+                var drawtotal = api
+                    .column(6)
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                var rettotal = api
+                    .column(7)
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Total over this page
+                var pageTotal = api
+                    .column(6, { page: 'current' })
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Update footer
+                $(api.column(6).footer()).html(drawtotal);
+                $(api.column(7).footer()).html(rettotal);
+            },
+
+        });
+    });
+</script>

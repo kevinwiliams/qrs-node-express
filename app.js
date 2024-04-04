@@ -98,6 +98,9 @@ app.use('/distribution', distributionRouter)
 
 const activityRouter = require('./routes/activity')
 app.use('/activity', activityRouter)
+
+const reportRouter = require('./routes/report')
+app.use('/report', reportRouter)
 // Start the server
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);

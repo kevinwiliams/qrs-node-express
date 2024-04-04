@@ -1,0 +1,81 @@
+{{!-- report/supervisor.hbs --}}
+
+<section class="section dashboard">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Daily Report</h5>
+                    <form action="/report/supervisor" method="post" name="supervisorReport">
+                        <div class="row pb-3">
+                            <div class="col-lg-3 col-md-6 form-group">
+                                <label for="supervisors">Supervisors:</label>
+                                <select id="supervisors" name="supervisors" class="form-select form-select-sm">
+                                    <option value="">All Contractors</option>
+                                    {{#each supervisors}}
+                                        <option value="{{this.Value}}">{{this.Text}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                            <div class="col-lg-3 col-md-6 form-group">
+                                <label for="startDate">Publish Start Date:</label>
+                                <input id="startDate" name="startDate" type="date" class="form-control form-control-sm" required>
+                            </div>
+                            <div class="col-lg-3 col-md-6 form-group">
+                                <label for="endDate">Publish End Date:</label>
+                                <input id="endDate" name="endDate" type="date" class="form-control form-control-sm" required>
+                            </div>
+                            <div class="col-lg-3 col-md-6 form-group">
+                                <button id="filterBtn" type="submit" class="btn btn-primary btn-sm mt-4">Filter</button>
+                            </div>
+                        </div>
+                    </form>
+                    <table class="table small dtSupReport" id="dtSupReport">
+                        <caption id="dateRange">
+                            <span class="small">User: {{userName}} / {{user}} / {{date}}</span>
+                        </caption>
+                        <thead>
+                            <tr>
+                                <th>User Name</th>
+                                <th>Account ID</th>
+                                <th>Retailer Name</th>
+                                <th>Company</th>
+                                <th>Retailer Address</th>
+                                <th>Publication Date</th>
+                                <th>Total Distribution Amount</th>
+                                <th>Total Return Amount</th>
+                                <th>Created At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each supervisorReport}}
+                                <tr>
+                                    <td>{{this.UserName}}</td>
+                                    <td>{{this.AccountID}}</td>
+                                    <td>{{this.RetailerName}}</td>
+                                    <td>{{this.Company}}</td>
+                                    <td>{{this.RetailerAddress}}</td>
+                                    <td>{{this.PublicationDate}}</td>
+                                    <td>{{this.TotalDistributionAmount}}</td>
+                                    <td>{{this.TotalReturnAmount}}</td>
+                                    <td>{{this.CreatedAt}}</td>
+                                </tr>
+                            {{/each}}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="6">Total</th>
+                                <th>2</th>
+                                <th>4</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{{> report/supervisorScripts}}
+
+
