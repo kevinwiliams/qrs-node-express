@@ -89,8 +89,8 @@ async function filterSupervisorReport(req, res) {
 
         // Convert the grouped supervisors to an array of objects
         const supervisorList = Object.entries(supervisorNames).map(([key, value]) => ({
-        Text: value,
-        Value: key
+            Text: value,
+            Value: key
         }));
 
         // Send the result as JSON response

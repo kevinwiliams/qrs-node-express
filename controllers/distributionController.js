@@ -3,6 +3,8 @@ const axios = require('axios');
 const moment = require('moment');
 const CircProTranx = require('../models/CircProTransactions'); // Assuming you have defined the Sequelize models
 const QRSActivityLog = require('../models/QRSActivityLogs'); // Assuming you have defined the Sequelize models
+const Util = require('../utils/utils');
+
 
 async function index(req, res) {
     try {
@@ -158,7 +160,8 @@ async function updateReturns(req, res) {
                 DistributionAmount: parseInt(drawAmount, 10),
                 ReturnAmount: returnCount,
                 Status: retStatus,
-                CreatedAt: moment().format('YYYY-MM-DD HH:mm:ss')
+                CreatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
+                // IPAddress: Util.getIPAddress(req)
             });
             await qRSActivityLog.save();
 

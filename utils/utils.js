@@ -3,6 +3,9 @@ const util = require('util');
 const nodemailer = require('nodemailer');
 const { Pool } = require('pg');
 const axios = require('axios');
+const dns = require('dns');
+// const os = require('os');
+const DeviceDetector = require('device-detector-js');
 
 
 const readFile = util.promisify(fs.readFile);
@@ -128,11 +131,71 @@ function isLocal() {
 async function postRequest(url, data) {
     try {
         const response = await axios.post(url, data);
+        console.log('response', response);
         return response.data;
     } catch (error) {
         console.error('Error making POST request:', error);
         throw error;
     }
+}
+
+// Function to check if IP is local
+function isLocalIP(req) {
+    const forwardedFor = req.headers['x-forwarded-for'];
+    if (forwardedFor) {
+        const ip = forwardedFor.split(',')[0];
+        return (ip === '127.0.0.1' || ip === '::1');
+    } else {
+        return (req.connection.remoteAddress === '127.0.0.1' || req.connection.remoteAddress === '::1');
+    }
+}
+
+function getBrowserName(req) {
+    const userAgent = req.headers['user-agent'];
+    let browser = req.headers['user-agent'];
+    if (userAgent.includes('Edge')) {
+        browser = 'Edge';
+    }
+
+    if (browser === 'InternetExplorer') {
+        browser = browser.replace('E', ' E');
+    }
+
+    return browser;
+}
+
+function getOSName(userAgent) {
+    try {
+        const dd = new DeviceDetector();
+        dd.setVersionTruncation(DeviceDetector.VERSION_TRUNCATION_NONE);
+        dd.parse(userAgent);
+        const os = dd.getOs();
+        return `${os?.name} ${os?.version}`;
+    } catch (error) {
+        // Handle errors
+        console.error('Error getting OS name:', error);
+        throw error;
+    }
+}
+
+function getIPAddress(req) {
+    const ipList = req.headers['x-forwarded-for'];
+    const ipHeader = req.connection.remoteAddress;
+
+    let ipAddress = '';
+    if (isLocalIP(ipHeader)) {
+        try {
+            const host = dns.reverse(ipHeader);
+            ipAddress = host.address;
+        } catch (error) {
+            // Handle errors
+            console.error('Error getting local IP:', error);
+        }
+    } else {
+        ipAddress = ipHeader;
+    }
+
+    return ipAddress;
 }
 
 module.exports = {
@@ -141,5 +204,9 @@ module.exports = {
     logUserActivity,
     sendMail,
     isLocal,
-    postRequest
+    postRequest,
+    isLocalIP,
+    getBrowserName,
+    getOSName,
+    getIPAddress
 };
