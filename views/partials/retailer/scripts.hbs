@@ -63,7 +63,7 @@
 
             $.ajax({
                     type: "POST",
-                    url: '@Url.Action("GetNewUsers", "retailer")',
+                    url: '/retailer/getnewusers',
                     dataType: 'json',
                 data: {
                     id: $('#maxDistId').val()
