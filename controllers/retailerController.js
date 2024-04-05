@@ -6,6 +6,12 @@ const AspNetUsers = require('../models/AspNetUsers');
 const AspNetUserRoles = require('../models/AspNetUserRoles');
 const sequelize = require('../config/db').sequelize;
 const ac = require('../controllers/accountController'); // Import the CircProAddress model
+const bcrypt = require('bcrypt');
+const { v4: uuidv4 } = require('uuid');
+
+function generateUUID() {
+    return uuidv4();
+}
 
 // Define a function to validate email addresses using regex
 async function isValidEmail(emailAddress) {
@@ -25,7 +31,7 @@ async function loadNewRetailers(id) {
 
         // Send the POST request
         const response = await Util.postRequest(url, formData);
-        // if (response.status === 200){
+        if (response.status === 200){
             const result = response.data;
 
             // Process the response
@@ -42,17 +48,26 @@ async function loadNewRetailers(id) {
                         // Hash the password
                         const password = "Password-01!";
                         const hashedPassword = await bcrypt.hash(password, 10);
+                        const uuid = generateUUID();
 
                         // Create application user
                         const newAccount = await AspNetUsers.create({
+                            Id: uuid,
                             UserName: item.EMAIL,
                             FullName: FullName,
                             Email: item.EMAIL,
-                            PasswordHash: hashedPassword // Assuming you have a field named PasswordHash in your model
+                            PasswordHash: hashedPassword,// Assuming you have a field named PasswordHash in your model
+                            EmailConfirmed: false,
+                            PhoneNumberConfirmed: false,
+                            TwoFactorEnabled: false,
+                            LockoutEnabled: false,
+                            AccessFailedCount: 0,
+
                         });
                 
                         // Assign user role based on email domain
                         const userRole = (item.EMAIL.toLowerCase().includes("jamaicaobserver.com")) ? "Circulation" : "Retailer";
+                        
                         await AspNetUserRoles.create({
                             UserId: newAccount.Id,
                             Role: userRole
@@ -97,7 +112,7 @@ async function loadNewRetailers(id) {
                 }
             }
 
-    //     }
+        }
         
         return true;
     } catch (error) {

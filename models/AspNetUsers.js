@@ -55,6 +55,8 @@ const AspNetUsers = sequelize.define('AspNetUsers', {
       type: DataTypes.STRING(250),
       allowNull: true,
     },
+  },{
+    timestamps: false // Disable timestamps handling
   });
   
   // Sync the model with the database
