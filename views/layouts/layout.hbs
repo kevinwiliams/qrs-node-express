@@ -24,12 +24,12 @@
                 <img src="/img/logo.png" alt="">
                 <span class="d-none d-lg-block">QRS</span>
             </a>
-            {{#if isAuthenticated}}
+            {{!-- {{#if isAuthenticated}} --}}
                 <i class="bi bi-list toggle-sidebar-btn"></i>
-            {{/if}}
+            {{!-- {{/if}} --}}
         </div><!-- End Logo -->
 
-        {{#if isAuthenticated}}
+        {{!-- {{#if isAuthenticated}} --}}
             <nav class="header-nav ms-auto">
                 <ul class="d-flex align-items-center">
                     <li class="nav-item dropdown pe-3">
@@ -85,22 +85,22 @@
                     </li><!-- End Profile Nav -->
                 </ul>
             </nav><!-- End Icons Navigation -->
-        {{/if}}
+        {{!-- {{/if}} --}}
     </header><!-- End Header -->
 
-    {{#if isAuthenticated}}
+    {{!-- {{#if isAuthenticated}} --}}
         <!-- ======= Sidebar ======= -->
         <aside id="sidebar" class="sidebar">
             <ul class="sidebar-nav" id="sidebar-nav">
-                {{#if isInRole "Circulation"}}
+                {{!-- {{#if isInRole "Circulation"}} --}}
                     <li class="nav-item">
-                        <a class="nav-link collapsed" href="{{dashboardUrl}}">
+                        <a class="nav-link collapsed" href="/">
                             <i class="bi bi-grid"></i>
                             <span>Dashboard</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link collapsed" href="{{agentsUrl}}">
+                        <a class="nav-link collapsed" href="/retailer">
                             <i class="bi bi-layout-text-window-reverse"></i>
                             <span>Agents</span>
                         </a>
@@ -111,21 +111,21 @@
                         </a>
                         <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav" style="">
                             <li>
-                                <a class="nav-link collapsed" href="{{supervisorReportUrl}}">
+                                <a class="nav-link collapsed" href="/report/supervisor">
                                     <i class="bi bi-layout-text-window-reverse"></i>
                                     <span>Supervisors</span>
                                 </a>
                             </li>
                             <li>
-                                <a class="nav-link collapsed" href="{{transactionsReportUrl}}">
+                                <a class="nav-link collapsed" href="/report/transactions">
                                     <i class="bi bi-layout-text-window-reverse"></i>
                                     <span>Transactions</span>
                                 </a>
                             </li>
                         </ul>
                     </li>
-                {{/if}}
-                {{#if isInRole "Retailer"}}
+                {{!-- {{/if}} --}}
+                {{!-- {{#if isInRole "Retailer"}}
                     <li class="nav-item">
                         <a class="nav-link collapsed" href="{{homeUrl}}">
                             <i class="bi bi-grid"></i>
@@ -140,13 +140,13 @@
                             <span>Home</span>
                         </a>
                     </li>
-                {{/if}}
+                {{/if}} --}}
             </ul>
         </aside><!-- End Sidebar -->
-    {{/if}}
+    {{!-- {{/if}} --}}
 
     <main id="main" class="main">
-        {{#if isAuthenticated}}
+        {{!-- {{#if isAuthenticated}} --}}
             <div class="pagetitle">
                 <h1>{{title}}</h1>
                 <nav>
@@ -155,7 +155,7 @@
                     </ol>
                 </nav>
             </div><!-- End Page Title -->
-        {{/if}}
+        {{!-- {{/if}} --}}
 
         <section class="section">
             {{{body}}}
