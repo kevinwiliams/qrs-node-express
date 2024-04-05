@@ -177,11 +177,13 @@ function getBrowserName(req) {
 
 function getOSName(userAgent) {
     try {
-        const dd = new DeviceDetector();
-        dd.setVersionTruncation(DeviceDetector.VERSION_TRUNCATION_NONE);
-        dd.parse(userAgent);
-        const os = dd.getOs();
-        return `${os?.name} ${os?.version}`;
+        const osRegex = /(windows nt|mac os x|linux) ([\d._]+)/i;
+        const match = userAgent.match(osRegex);
+        if (match && match.length === 3) {
+            return `${match[1]} ${match[2]}`;
+        } else {
+            return 'Unknown';
+        }
     } catch (error) {
         // Handle errors
         console.error('Error getting OS name:', error);
