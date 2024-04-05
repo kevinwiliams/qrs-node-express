@@ -4,6 +4,8 @@ const nodemailer = require('nodemailer');
 const { Pool } = require('pg');
 const axios = require('axios');
 const dns = require('dns');
+const requestIP = require('request-ip');
+
 // const os = require('os');
 const DeviceDetector = require('device-detector-js');
 
@@ -192,21 +194,20 @@ function getOSName(userAgent) {
 }
 
 function getIPAddress(req) {
-    const ipList = req.headers['x-forwarded-for'];
-    const ipHeader = req.connection.remoteAddress;
-
-    let ipAddress = '';
-    if (isLocalIP(ipHeader)) {
-        try {
-            const host = dns.reverse(ipHeader);
-            ipAddress = host.address;
-        } catch (error) {
-            // Handle errors
-            console.error('Error getting local IP:', error);
-        }
-    } else {
-        ipAddress = ipHeader;
-    }
+    console.log('req', req.connection.remoteAddress);
+    
+    const ipAddress = requestIP.getClientIp(req);
+    console.log('ipAddress', ipAddress);
+    // If the IP address is a local IP, try to resolve the hostname
+    // if (isLocalIP(ipAddress)) {
+    //     try {
+    //         const host = dns.reverse(ipAddress);
+    //         ipAddress = host.address;
+    //     } catch (error) {
+    //         // Handle errors
+    //         console.error('Error getting local IP:', error);
+    //     }
+    // }
 
     return ipAddress;
 }

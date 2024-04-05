@@ -161,7 +161,8 @@ async function updateReturns(req, res) {
                 ReturnAmount: returnCount,
                 Status: retStatus,
                 CreatedAt: moment().format('YYYY-MM-DD HH:mm:ss'),
-                // IPAddress: Util.getIPAddress(req)
+                SystemInformation: Util.getOSName(req.headers['user-agent']) + ' - ' + Util.getBrowserName(req),
+                IPAddress: Util.getIPAddress(req)
             });
             await qRSActivityLog.save();
 
