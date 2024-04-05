@@ -8,7 +8,7 @@ const sequelize = require('../config/db').sequelize;
 const ac = require('../controllers/accountController'); // Import the CircProAddress model
 
 // Define a function to validate email addresses using regex
-function isValidEmail(emailAddress) {
+async function isValidEmail(emailAddress) {
     // Regular expression for email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(emailAddress);
@@ -18,81 +18,87 @@ async function loadNewRetailers(id) {
     try {
         // Define the URL of the ASP page
         const url = process.env.CIRC_PRO_API_NEW_USER; // Assuming you have environment variables set up
-        console.log('url', url);
         // Define your form data as key-value pairs
         const formData = {
             distribution_id: id
         };
 
         // Send the POST request
-        const result = await Util.postRequest(url, formData);
-        console.log('result', result);
+        const response = await Util.postRequest(url, formData);
+        // if (response.status === 200){
+            const result = response.data;
 
-        // Process the response
-        for (const item of result) {
-            const isValidEmail = isValidEmail(item.EMAIL);
-            if (isValidEmail) {
-                const isExist = ac.isEmailExist(item.EMAIL);
-                if (!isExist) {
-                    const FullName = (item.FIRST_NAME === "null" ? null : item.FIRST_NAME) + " " + (item.LAST_NAME === "null" ? null : item.LAST_NAME) || (item.COMPANY === "null" ? null : item.COMPANY);
+            // Process the response
+            for (const item of result) {
+                // console.log(item.EMAIL);
+                const isValid = isValidEmail(item.EMAIL);
+                console.log('isValid', isValid);
+                if (isValid) {
+                    const isExist = await ac.isEmailExist(item.EMAIL);
+                    console.log('isExist', isExist);
+                    if (!isExist) {
+                        const FullName = (item.FIRST_NAME === "null" ? null : item.FIRST_NAME) + " " + (item.LAST_NAME === "null" ? null : item.LAST_NAME) || (item.COMPANY === "null" ? null : item.COMPANY);
+                        console.log('FullName', FullName);
+                        // Hash the password
+                        const password = "Password-01!";
+                        const hashedPassword = await bcrypt.hash(password, 10);
 
-                    // Hash the password
-                    const password = "Password-01!";
-                    const hashedPassword = await bcrypt.hash(password, 10);
+                        // Create application user
+                        const newAccount = await AspNetUsers.create({
+                            UserName: item.EMAIL,
+                            FullName: FullName,
+                            Email: item.EMAIL,
+                            PasswordHash: hashedPassword // Assuming you have a field named PasswordHash in your model
+                        });
+                
+                        // Assign user role based on email domain
+                        const userRole = (item.EMAIL.toLowerCase().includes("jamaicaobserver.com")) ? "Circulation" : "Retailer";
+                        await AspNetUserRoles.create({
+                            UserId: newAccount.Id,
+                            Role: userRole
+                        });
 
-                    // Create application user
-                    const newAccount = await AspNetUsers.create({
-                        UserName: item.EMAIL,
-                        FullName: FullName,
-                        Email: item.EMAIL,
-                        PasswordHash: hashedPassword // Assuming you have a field named PasswordHash in your model
-                    });
-               
-                    // Assign user role based on email domain
-                    const userRole = (item.EMAIL.toLowerCase().includes("jamaicaobserver.com")) ? "Circulation" : "Retailer";
-                    await AspNetUserRoles.create({
-                        UserId: newAccount.Id,
-                        Role: userRole
-                    });
+                        // Create CircproUsers object
+                        const circProUsers = new CircproUsers({
+                            UserID : newAccount.Id,
+                            AccountID: item.ACCOUNT,
+                            CellNumber: item.CELL_NUMBER === "null" ? null : item.CELL_NUMBER,
+                            Company: item.COMPANY === "null" ? null : item.COMPANY,
+                            DistributionID: item.DISTRIBUTION_ID,
+                            EmailAddress: item.EMAIL,
+                            FirstName: item.FIRST_NAME === "null" ? null : item.FIRST_NAME,
+                            LastName: item.LAST_NAME === "null" ? null : item.LAST_NAME,
+                            PhoneNumber: item.PHONE_NUMBER === "null" ? null : item.PHONE_NUMBER,
+                            CreatedAt: item.DATE_TIME_STAMP,
+                            IsActive: true
+                        });
 
-                    // Create CircproUsers object
-                    const circProUsers = new CircproUsers({
-                        UserID : newAccount.Id,
-                        AccountID: item.ACCOUNT,
-                        CellNumber: item.CELL_NUMBER === "null" ? null : item.CELL_NUMBER,
-                        Company: item.COMPANY === "null" ? null : item.COMPANY,
-                        DistributionID: item.DISTRIBUTION_ID,
-                        EmailAddress: item.EMAIL,
-                        FirstName: item.FIRST_NAME === "null" ? null : item.FIRST_NAME,
-                        LastName: item.LAST_NAME === "null" ? null : item.LAST_NAME,
-                        PhoneNumber: item.PHONE_NUMBER === "null" ? null : item.PHONE_NUMBER,
-                        CreatedAt: item.DATE_TIME_STAMP,
-                        IsActive: true
-                    });
+                        // Create CircProAddress object
+                        const circProAddress = new CircProAddress({
+                            UserID : newAccount.Id,
+                            AccountID: item.ACCOUNT,
+                            EmailAddress: item.EMAIL,
+                            AddressLine1: item.ADDRESS_LINE1 === "null" ? null : item.ADDRESS_LINE1,
+                            AddressLine2: item.ADDRESS_LINE2 === "null" ? null : item.ADDRESS_LINE2,
+                            CityTown: item.ADDRESS_LINE3 === "null" ? null : item.ADDRESS_LINE3,
+                            CreatedAt: item.DATE_TIME_STAMP
+                        });
 
-                    // Create CircProAddress object
-                    const circProAddress = new CircProAddress({
-                        UserID : newAccount.Id,
-                        AccountID: item.ACCOUNT,
-                        EmailAddress: item.EMAIL,
-                        AddressLine1: item.ADDRESS_LINE1 === "null" ? null : item.ADDRESS_LINE1,
-                        AddressLine2: item.ADDRESS_LINE2 === "null" ? null : item.ADDRESS_LINE2,
-                        CityTown: item.ADDRESS_LINE3 === "null" ? null : item.ADDRESS_LINE3,
-                        CreatedAt: item.DATE_TIME_STAMP
-                    });
+                        // Save CircproUsers and CircProAddress to the database
+                        const [user, address] = await Promise.all([
+                            circProUsers.save(),
+                            circProAddress.save()
+                        ]);
 
-                    // Save CircproUsers and CircProAddress to the database
-                    const [user, address] = await Promise.all([
-                        circProUsers.save(),
-                        circProAddress.save()
-                    ]);
-
-                    // Update CircproUsers with AddressID
-                    user.AddressID = address.id;
-                    await user.save();
+                        // Update CircproUsers with AddressID
+                        user.AddressID = address.id;
+                        await user.save();
+                    }
                 }
             }
-        }
+
+    //     }
+        
         return true;
     } catch (error) {
         console.error('Error loading new retailers:', error);

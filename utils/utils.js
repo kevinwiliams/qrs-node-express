@@ -130,11 +130,22 @@ function isLocal() {
 
 async function postRequest(url, data) {
     try {
-        const response = await axios.post(url, data);
-        console.log('response', response);
-        return response.data;
+        // Convert data to URL-encoded form data
+        const formData = new URLSearchParams();
+        for (const [key, value] of Object.entries(data)) {
+            formData.append(key, value);
+        }
+        // Send POST request with headers
+        const response = await axios.post(url, formData, {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
+
+        // console.log('response', response.data);
+        return response;
     } catch (error) {
-        console.error('Error making POST request:', error);
+        console.error('Error making POST request:', error.response.data);
         throw error;
     }
 }

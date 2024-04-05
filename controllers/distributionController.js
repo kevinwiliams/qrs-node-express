@@ -210,8 +210,9 @@ async function getLatest(req, res) {
         const { id } = req.body;
 
         // Fetch the latest transactions for the given accountId
-        const startDate = getLastDistDate(id);
-        const endDate = new Date();
+        const lastDate = await getLastDistDate(id);
+        const startDate = lastDate.toISOString().split('T')[0];
+        const endDate = new Date().toISOString().split('T')[0];
         const loadCircTranx = await loadTransactions(id, startDate, endDate);
 
         // Send the retrieved data as a response
@@ -227,8 +228,8 @@ async function getLatestDraw(req, res) {
         const { id } = req.body;
 
         // Fetch the latest draw transactions for the given accountId within the last 60 days
-        const startDate = new Date(new Date() - 60 * 24 * 60 * 60 * 1000); // 60 days ago
-        const endDate = new Date();
+        const startDate = new Date(new Date() - 60 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]; // 60 days ago
+        const endDate = new Date().toISOString().split('T')[0];
         const drawTransactions = await updateDistributions(id, startDate, endDate);
         // Send the retrieved data as a response
         res.status(200).json({ success: drawTransactions });
@@ -280,8 +281,7 @@ async function loadTransactions(accountID, startDate, endDate) {
         };
 
         // Send the POST request using axios
-        const response = await axios.post(url, formData);
-
+        const response = await Util.postRequest(url, formData);
         // Check if the request was successful
         if (response.status === 200) {
             const resultTrans = response.data;
@@ -332,8 +332,7 @@ async function updateDistributions(accountID, startDate, endDate) {
         };
 
         // Send the POST request using axios
-        const response = await axios.post(url, formData);
-
+        const response = await Util.postRequest(url, formData);
         // Check if the request was successful
         if (response.status === 200) {
             const resultTrans = response.data;
@@ -374,8 +373,9 @@ async function getLastDistDate(accountID) {
         });
 
         if (result) {
+            const res = JSON.parse(JSON.stringify(result));
             // If a result is found, add one day to the publication date
-            const lastDistDate = new Date(result.PublicationDate);
+            const lastDistDate = new Date(res.PublicationDate);
             lastDistDate.setDate(lastDistDate.getDate() + 1);
             return lastDistDate;
         } else {
