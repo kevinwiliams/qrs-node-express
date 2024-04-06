@@ -1,0 +1,63 @@
+<!-- views/welcome.hbs -->
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>Welcome to Quick Return System</h2>
+        <p>Maximize your returns and streamline your inventory management with our cutting-edge system.</p>
+    </div>
+</div>
+
+<section class="section dashboard">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="filter">
+                    <a class="icon" href="#" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi bi-three-dots"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" style="">
+                        <li class="dropdown-header text-start">
+                            <h6>Filter</h6>
+                        </li>
+                        <li><a class="dropdown-item chart-filter" href="#" data-value="daily">Daily</a></li>
+                        <li><a class="dropdown-item chart-filter" href="#" data-value="weekly">Weekly</a></li>
+                        <li><a class="dropdown-item chart-filter" href="#" data-value="monthly">Monthly</a></li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Returns <span id="retInterval"></span></h5>
+                    <!-- Line Chart -->
+                    <div id="returnsChart"></div>
+                    <!-- End Line Chart -->
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <!-- Recent Activity -->
+            <div class="card">
+                <div class="filter">
+                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                        <li class="dropdown-header text-start">
+                            <h6>Menu</h6>
+                        </li>
+                        <li><a class="dropdown-item" href="/activity/logs">View all</a></li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Recent Activity <span>| Active</span></h5>
+                    <div class="activity">
+                        {{#each activityLogs}}
+                            <div class="activity-item d-flex">
+                                <div class="activite-label">{{ LogInformation }}</div>
+                                <i class='bi bi-circle-fill activity-badge {{#if (eq Status "Open")}}text-success{{else}}text-danger{{/if}} align-self-start'></i>
+                                <div class="activity-content">
+                                    {{ UserName }} (<a href="/distribution/account/{{ AccountID }}" class="fw-bold text-dark">{{ AccountID }}</a>) {{#if (eq Status "Open")}}returned{{else}}confirmed{{/if}} {{ ReturnAmount }} for {{ PublicationDate }}</div>
+                            </div><!-- End activity item-->
+                        {{/each}}
+                    </div>
+                </div>
+            </div><!-- End Recent Activity -->
+        </div>
+    </div>
+</section>
+{{!-- Scripts --}}
+{{> dashboard/indexScripts}}

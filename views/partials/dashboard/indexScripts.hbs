@@ -1,0 +1,127 @@
+<script src="/js/jquery-3.7.1.js"></script>
+
+<script>
+    var retChartdefault = 'weekly';
+
+    function toSentenceCase(text) {
+        return text.toLowerCase().replace(/(^|\. *)([a-z])/g, function(match, separator, char) {
+            return separator + char.toUpperCase();
+        });
+    }
+
+    function renderChart(transactionData, intervals) {
+        
+        var chartOptions = {
+            series: [{
+                name: 'Distributed',
+                data: transactionData.map(function (item) { return item.TotalDistributionAmount; })
+            },
+            {
+                name: 'Return',
+                data: transactionData.map(function (item) { return item.TotalReturnAmount; })
+            },
+            {
+                name: 'Confirmed',
+                data: transactionData.map(function (item) { return item.TotalConfirmedAmount; })
+            }],
+            chart: {
+                id: 'returnsChart',
+                height: 350,
+                type: 'line',
+                zoom: {
+                    enabled: false
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'straight'
+            },
+            grid: {
+                row: {
+                    colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                    opacity: 0.5
+                },
+            },
+            xaxis: {
+                categories: transactionData.map(function (item) { return  item.PeriodText }),
+                //title: {
+                //    text: intervals
+                //}
+            },
+            yaxis: {
+                title: {
+                    text: 'Distributions'
+                }
+            },
+        };
+
+        var returnsChart = new ApexCharts(document.querySelector("#returnsChart"), chartOptions);
+        returnsChart.render();
+
+        // Clear chart data by setting an empty array for series data
+        ApexCharts.exec('returnsChart', 'updateSeries',[{
+            name: 'Distributed',
+            data: []
+        }, {
+            name: 'Return',
+            data: []
+        }, {
+            name: 'Confirmed',
+            data: []
+        }], true);
+
+        // Render the chart with new data
+        ApexCharts.exec('returnsChart', 'updateOptions',{
+            xaxis: {
+                categories: transactionData.map(function (item) { return  item.PeriodText }),
+            },
+            series: [{
+                name: 'Distributed',
+                data: transactionData.map(function (item) { return item.TotalDistributionAmount; })
+            }, {
+                name: 'Return',
+                data: transactionData.map(function (item) { return item.TotalReturnAmount; })
+            }, {
+                name: 'Confirmed',
+                data: transactionData.map(function (item) { return item.TotalConfirmedAmount; })
+            }]
+        }, false, true);
+    }
+
+    function loadReturnsChart(filterValue) {
+        
+        $.ajax({
+                url: '@Url.Action("GetChartData", "Home")',
+                type: 'POST',
+                data: { aggregationType: filterValue },
+                success: function (response) {
+                    if (response.success) {
+                        renderChart(response.data, filterValue);
+                        var interval = '| ' + toSentenceCase(filterValue);
+                        $('#retInterval').html(interval)
+                    } else {
+                       console.error('Error:', response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                   console.error('AJAX Error:', error);
+               }
+            });
+    }
+
+    $(document).ready(function () {
+         loadReturnsChart(retChartdefault);
+        // Click event handler for dropdown items
+        $('.chart-filter').on('click', function (e) {
+            e.preventDefault(); // Prevent the default action of the anchor element
+
+            // Get the value of the data-value attribute
+            var filterValue = $(this).data('value') || retChartdefault;
+            loadReturnsChart(filterValue);
+            
+        });
+    });
+
+</script>

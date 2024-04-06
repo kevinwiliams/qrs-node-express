@@ -50,6 +50,17 @@ const hbs = exphbs.create({
         },
         ne: function(arg1, arg2, options) {
             return Handlebars.helpers.ne(arg1, arg2, options);
+        },
+        validationMessage : function(field, errors) {
+            let errorMessage = '';
+            if (errors) {
+                errors.forEach(error => {
+                    if (error.field === field) {
+                        errorMessage = error.msg;
+                    }
+                });
+            }
+            return new Handlebars.SafeString(`<p class="invalid-feedback">${errorMessage}</p>`);
         }
     }
 });
@@ -86,6 +97,9 @@ app.get('/', (req, res) => {
 // Import and use route handlers
 const authRoutes = require('./routes/auth');
 app.use('/auth', authRoutes);
+
+const dashboardRoutes = require('./routes/dashboard');
+app.use('/dashboard', dashboardRoutes);
 
 const userRouter = require('./routes/users')
 app.use('/users', userRouter)

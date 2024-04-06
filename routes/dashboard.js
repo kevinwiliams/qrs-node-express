@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const dashboardController = require('../controllers/dashboardController');
 
-router.get('/supervisor', dashboardController.getIndex);
-router.post('/supervisor', dashboardController.getLogs);
-router.get('/transactions', dashboardController.getHistory);
-router.post('/transactions', dashboardController.getLastEntry);
+router.get('/', dashboardController.indexHandler);
+router.get('/profile', dashboardController.profileHandler);
+router.post('/profile', dashboardController.updateProfileHandler);
+router.post('/getchartdata', dashboardController.getChartData); 
 
 module.exports = router;
