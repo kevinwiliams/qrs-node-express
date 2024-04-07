@@ -10,7 +10,21 @@
     }
 
     function renderChart(transactionData, intervals) {
-        
+
+        switch(intervals){
+            case 'daily':
+                transactionData = transactionData.DailyData;
+                break;
+            case 'weekly':
+                transactionData = transactionData.WeeklyData;
+                break;
+            case 'monthly':
+                transactionData = transactionData.MonthlyData;
+                break;
+            default:
+            break;
+        }
+
         var chartOptions = {
             series: [{
                 name: 'Distributed',
@@ -93,10 +107,11 @@
     function loadReturnsChart(filterValue) {
         
         $.ajax({
-                url: '@Url.Action("GetChartData", "Home")',
+                url: '/dashboard/getchartdata',
                 type: 'POST',
                 data: { aggregationType: filterValue },
                 success: function (response) {
+                    
                     if (response.success) {
                         renderChart(response.data, filterValue);
                         var interval = '| ' + toSentenceCase(filterValue);

@@ -26,17 +26,19 @@ class TransactionDataViewModel {
 
 async function indexHandler(req, res) {
     try {
-        if (req.isAuthenticated()) {
+        if (req.session.isAuthenticated) {
             const userData = {
-                UserRole: (req.user.role === "Retailer") ? "Retailer" : (req.user.role === "Circulation") ? "Circulation" : (req.user.role === "Supervisor") ? "Supervisor" : "Admin",
-                UserName: req.user.fullName
+                UserRole: req.user.role,
+                UserName: req.user.FullName,
+                Email: req.user.Email,
+                AccountId: req.user.accountId
             };
 
             req.session.userData = userData;
 
             if (req.user.role === "Circulation" || req.user.role === "Admin") {
                 const activityLogs = await getRecentActivities();
-                res.render('index', { userData, activityLogs });
+                res.render('dashboard/index', { userData, activityLogs, layout: 'layout' });
             } else if (req.user.role === "Supervisor") {
                 res.redirect('/retailer');
             } else if (req.user.role === "Retailer") {
@@ -46,7 +48,7 @@ async function indexHandler(req, res) {
                 }
             }
         } else {
-            res.render('index');
+            res.render('dashboard/index', {layout: 'layout'});
         }
     } catch (error) {
         console.error('Error:', error);
@@ -125,7 +127,7 @@ function formatRelativeDate(date) {
 async function getChartDataQuery(aggregationType) {
     try {
         const currentDate = new Date().toISOString().split('T')[0];
-        const currentYear = currentDate.getFullYear();
+        const currentYear = new Date().getFullYear();
         const startDate = new Date(currentYear, 0, 1).toISOString().split('T')[0]; // Start of the current year
 
         let query;
@@ -148,21 +150,21 @@ async function getChartDataQuery(aggregationType) {
             case 'weekly':
                 query = `
                     SELECT 
-                        WEEK(publicationDate) AS periodNumber,
+                    DATEPART(week, publicationDate) AS periodNumber,
                         SUM(distributionAmount) AS totalDistributionAmount,
                         SUM(returnAmount) AS totalReturnAmount,
                         SUM(confirmedAmount) AS totalConfirmedAmount
                     FROM [dbo].[CircProTransactions]
                     WHERE YEAR(publicationDate) = :year
                     AND publicationDate >= :startDate
-                    GROUP BY WEEK(publicationDate)
-                    ORDER BY WEEK(publicationDate)
+                    GROUP BY DATEPART(week, publicationDate)
+                    ORDER BY DATEPART(week, publicationDate)
                 `;
                 break;
             case 'daily':
                 query = `
                     SELECT 
-                        DAY(publicationDate) AS periodNumber,
+                    DATEPART(day, publicationDate) AS periodNumber,
                         SUM(distributionAmount) AS totalDistributionAmount,
                         SUM(returnAmount) AS totalReturnAmount,
                         SUM(confirmedAmount) AS totalConfirmedAmount
@@ -170,8 +172,8 @@ async function getChartDataQuery(aggregationType) {
                     WHERE YEAR(publicationDate) = :year
                     AND MONTH(publicationDate) = :month
                     AND publicationDate >= :startDate
-                    GROUP BY DAY(publicationDate)
-                    ORDER BY DAY(publicationDate)
+                    GROUP BY DATEPART(day, publicationDate)
+                    ORDER BY DATEPART(day, publicationDate)
                 `;
                 break;
             default:
@@ -179,7 +181,7 @@ async function getChartDataQuery(aggregationType) {
         }
 
         return await sequelize.query(query, {
-            replacements: { year: currentYear, month: currentDate.getMonth() + 1, startDate },
+            replacements: { year: currentYear, month: new Date().getMonth() + 1, startDate },
             type: QueryTypes.SELECT,
         });
     } catch (error) {
