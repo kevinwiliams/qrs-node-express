@@ -1,4 +1,4 @@
-const Util = require('../utils/utils'); // Import Util model
+const Util = require('../helpers/utils'); // Import Util model
 const Retailer = require('../models/retailer'); // Import Retailer model
 const CircproUsers = require('../models/CircproUsers'); // Import the CircproUsers model
 const CircProAddress = require('../models/CircProAddresses'); // Import the CircProAddress model

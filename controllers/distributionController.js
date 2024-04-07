@@ -3,7 +3,7 @@ const axios = require('axios');
 const moment = require('moment');
 const CircProTranx = require('../models/CircProTransactions'); // Assuming you have defined the Sequelize models
 const QRSActivityLog = require('../models/QRSActivityLogs'); // Assuming you have defined the Sequelize models
-const Util = require('../utils/utils');
+const Util = require('../helpers/utils');
 
 
 async function index(req, res) {

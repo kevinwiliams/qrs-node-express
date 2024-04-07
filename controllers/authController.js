@@ -1,7 +1,6 @@
-// authController.js
-
+const sequelize = require('../config/db').sequelize;
 const express = require('express');
-const router = express.Router();
+const bcrypt = require('bcrypt');
 
 // GET: /Account/Login
 const getLogin = (req, res) => {
@@ -11,23 +10,27 @@ const getLogin = (req, res) => {
 
 // POST: /Account/Login
 const postLogin = async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
     try {
         // Query the database to find the user by username
-        const result = await sql.query`SELECT * FROM [dbo].[AspNetUsers] WHERE [UserName] = ${username}`;
-        const user = result.recordset[0];
+        const result = await sequelize.query(`SELECT * FROM [dbo].[AspNetUsers] WHERE [UserName] = '${email}'`, { type: sequelize.QueryTypes.SELECT });
+        console.log('result', result);
+        const user = result[0];
         if (!user) {
-            res.render('login', { error: 'Invalid username or password' });
+            res.render('auth/login', { error: 'Invalid username or password', layout: 'blank' });
+            return;
         }
         // Compare the password hash
         const isMatch = await bcrypt.compare(password, user.PasswordHash);
         if (!isMatch) {
-            res.render('login', { error: 'Incorrect username/password' ,  layout: 'layout'});
+            res.render('auth/login', { error: 'Incorrect username/password' ,  layout: 'blank'});
+            return;
         }
-
         // Set user session
         req.session.user = user; // Example: Storing user data in session
-        res.redirect(returnUrl || '/dashboard'); // Redirect to home page
+        req.session.req.isAuthenticated = true;
+        // res.redirect(returnUrl || '/dashboard'); // Redirect to home page
+        res.redirect('/dashboard'); // Redirect to home page
     } catch (error) {
         console.error('Error logging in:', error);
         res.status(500).send('Internal Server Error');
