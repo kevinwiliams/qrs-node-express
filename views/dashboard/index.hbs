@@ -50,7 +50,7 @@
                                 <div class="activite-label">{{ LogInformation }}</div>
                                 <i class='bi bi-circle-fill activity-badge {{#if (eq Status "Open")}}text-success{{else}}text-danger{{/if}} align-self-start'></i>
                                 <div class="activity-content">
-                                    {{ UserName }} (<a href="/distribution/account/{{ AccountID }}" class="fw-bold text-dark">{{ AccountID }}</a>) {{#if (eq Status "Open")}}returned{{else}}confirmed{{/if}} {{ ReturnAmount }} for {{ PublicationDate }}</div>
+                                    {{ UserName }} (<a href="/distribution/account/{{ AccountID }}" class="fw-bold text-dark">{{ AccountID }}</a>) {{#if (eq Status "Open")}}returned{{else}}confirmed{{/if}} {{ ReturnAmount }} for {{ formatListDate PublicationDate }}</div>
                             </div><!-- End activity item-->
                         {{/each}}
                     </div>

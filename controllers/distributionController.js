@@ -119,6 +119,7 @@ async function account(req, res) {
 async function updateReturns(req, res) {
     try {
         const { accountId, returnAmount, drawAmount, confirmAmount, publicationDate, loggedEmail } = req.body;
+        const UserData = req.session.userData;
         const userRole = req.session.userData.UserRole;
         // Split the date string by "/"
         const parts = publicationDate.split('/');
@@ -166,8 +167,8 @@ async function updateReturns(req, res) {
             const qRSActivityLog = new QRSActivityLog({
                 AccountID: accountId,
                 LogInformation: '',
-                UserName: loggedEmail, // Assuming the user's email is used as the username
-                EmailAddress: loggedEmail,
+                UserName: UserData.UserName, // Assuming the user's email is used as the username
+                EmailAddress: UserData.Email,
                 PublicationDate: parsedPublicationDate,
                 DistributionAmount: parseInt(drawAmount, 10),
                 ReturnAmount: returnCount,
