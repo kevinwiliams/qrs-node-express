@@ -15,6 +15,7 @@ async function getLogs(req, res) {
         res.render('activity/logs', { 
             layout: 'layout', // Specify the layout template
             qRSActivityLogs: JSON.parse(JSON.stringify(qRSActivityLogs)), 
+            title: 'History Logs',
             ...userData 
         });
 
@@ -41,6 +42,7 @@ async function getHistory(req, res) {
             layout: 'layout', // Specify the layout template
             qRSActivityLogs : JSON.parse(JSON.stringify(qRSActivityLogs)), 
             publicationDate: parsedPubDate.toISOString(), 
+            title: 'Account History',
             ...userData });
     } catch (error) {
         console.error('Error fetching activity history:', error);

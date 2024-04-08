@@ -102,7 +102,9 @@ async function account(req, res) {
                 EmailAddress,
                 PhoneNumber,
                 CellNumber,
-                userData: req.session.userData
+                userData: req.session.userData,
+                title: 'Account'
+
             });
         } else {
             res.render('distribution/account', {  layout: 'layout', userData: req.session.userData,

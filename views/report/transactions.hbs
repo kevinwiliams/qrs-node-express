@@ -56,11 +56,11 @@
                                     <td>{{this.RetailerName}}</td>
                                     <td>{{this.Company}}</td>
                                     <td>{{this.RetailerAddress}}</td>
-                                    <td>{{this.PublicationDate}}</td>
+                                    <td>{{formatListDate this.PublicationDate}}</td>
                                     <td>{{this.TotalDistributionAmount}}</td>
                                     <td>{{this.TotalReturnAmount}}</td>
                                     <td>{{this.TotalConfirmedAmount}}</td>
-                                    <td>{{this.CreatedAt}}</td>
+                                    <td>{{formatTimeDate this.CreatedAt}}</td>
                                     <td>{{this.Status}}</td>
                                 </tr>
                             {{/each}}

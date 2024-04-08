@@ -59,6 +59,9 @@ const hbs = exphbs.create({
         formatDBDate: function(date) {
             return moment(date).format('YYYY-MM-DD');
         },
+        formatTimeDate: function(date) {
+            return moment(date).format('DD-MMM-YYYY h:mmA');
+        },
         eq: function(arg1, arg2, options) {
             return Handlebars.helpers.eq(arg1, arg2, options);
         },
