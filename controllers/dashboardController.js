@@ -26,29 +26,33 @@ class TransactionDataViewModel {
 
 async function indexHandler(req, res) {
     try {
+        console.log('isAuthenticated', req.session.isAuthenticated);
+
         if (req.session.isAuthenticated) {
             const userData = {
-                UserRole: req.user.role,
-                UserName: req.user.FullName,
-                Email: req.user.Email,
-                AccountId: req.user.accountId
+                UserRole: req.session.user.role,
+                UserName: req.session.user.FullName,
+                Email: req.session.user.Email,
+                AccountId: req.session.user.accountId
             };
 
             req.session.userData = userData;
-
-            if (req.user.role === "Circulation" || req.user.role === "Admin") {
+            const isAuthenticated = req.session.isAuthenticated;
+            if (userData.UserRole === "Circulation" || userData.UserRole === "Admin") {
                 const activityLogs = await getRecentActivities();
                 res.render('dashboard/index', { userData, activityLogs, layout: 'layout' });
-            } else if (req.user.role === "Supervisor") {
+            } else if (userData.UserRole === "Supervisor") {
                 res.redirect('/retailer');
-            } else if (req.user.role === "Retailer") {
-                const accountId = req.session.accountId;
+            } else if (userData.UserRole === "Retailer") {
+                const accountId = req.session.user.accountId;
                 if (accountId) {
                     res.redirect(`/distribution/account/${accountId}`);
                 }
             }
         } else {
-            res.render('dashboard/index', {layout: 'layout'});
+            console.log('fail');
+            res.render('auth/login', {
+                layout: 'blank'});
         }
     } catch (error) {
         console.error('Error:', error);
@@ -91,6 +95,7 @@ async function getRecentActivities() {
             limit: 9,
             order: [['CreatedAt', 'DESC']]
         });
+        // console.log('activityLogs', activityLogs);
 
         return activityLogs.map(log => ({
             ...log.dataValues,

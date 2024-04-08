@@ -22,25 +22,25 @@
         <div class="d-flex align-items-center justify-content-between">
             <a href="{{homeUrl}}" class="logo d-flex align-items-center">
                 <img src="/img/logo.png" alt="">
-                <span class="d-none d-lg-block">QRS</span>
+                <span class="d-none d-lg-block">QRS</span>{{isAuthenticated}}
             </a>
-            {{!-- {{#if isAuthenticated}} --}}
+            {{#if (isAuthenticated)}}
                 <i class="bi bi-list toggle-sidebar-btn"></i>
-            {{!-- {{/if}} --}}
+            {{/if}}
         </div><!-- End Logo -->
 
-        {{!-- {{#if isAuthenticated}} --}}
+        {{#if (isAuthenticated)}}
             <nav class="header-nav ms-auto">
                 <ul class="d-flex align-items-center">
                     <li class="nav-item dropdown pe-3">
                         <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                             <img src="/img/profile-pic.jpg" alt="Profile" class="rounded-circle">
-                            <span class="d-none d-md-block dropdown-toggle ps-2">{{userName}}</span>
+                            <span class="d-none d-md-block dropdown-toggle ps-2">{{userData.UserName}}</span>
                         </a><!-- End Profile Image Icon -->
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                             <li class="dropdown-header">
-                                <h6>{{userName}}</h6>
-                                <span>{{userRole}}</span>
+                                <h6>{{userData.UserName}}</h6>
+                                <span>{{userData.UserRole}}</span>
                             </li>
                             <li>
                                 <hr class="dropdown-divider">
@@ -85,16 +85,16 @@
                     </li><!-- End Profile Nav -->
                 </ul>
             </nav><!-- End Icons Navigation -->
-        {{!-- {{/if}} --}}
+        {{/if}}
     </header><!-- End Header -->
 
-    {{!-- {{#if isAuthenticated}} --}}
+    {{#if (isAuthenticated)}}
         <!-- ======= Sidebar ======= -->
         <aside id="sidebar" class="sidebar">
             <ul class="sidebar-nav" id="sidebar-nav">
-                {{!-- {{#if isInRole "Circulation"}} --}}
+                {{#if (or isInRole "Circulation" isInRole "Admin")}}
                     <li class="nav-item">
-                        <a class="nav-link collapsed" href="/">
+                        <a class="nav-link collapsed" href="/dashboard">
                             <i class="bi bi-grid"></i>
                             <span>Dashboard</span>
                         </a>
@@ -124,8 +124,8 @@
                             </li>
                         </ul>
                     </li>
-                {{!-- {{/if}} --}}
-                {{!-- {{#if isInRole "Retailer"}}
+                {{/if}}
+                {{#if (isInRole "Retailer")}}
                     <li class="nav-item">
                         <a class="nav-link collapsed" href="{{homeUrl}}">
                             <i class="bi bi-grid"></i>
@@ -133,20 +133,20 @@
                         </a>
                     </li>
                 {{/if}}
-                {{#if isInRole "Supervisor"}}
+                {{#if (isInRole "Supervisor")}}
                     <li class="nav-item">
                         <a class="nav-link collapsed" href="{{retailerUrl}}">
                             <i class="bi bi-grid"></i>
                             <span>Home</span>
                         </a>
                     </li>
-                {{/if}} --}}
+                {{/if}}
             </ul>
         </aside><!-- End Sidebar -->
-    {{!-- {{/if}} --}}
+    {{/if}}
 
     <main id="main" class="main">
-        {{!-- {{#if isAuthenticated}} --}}
+        {{#if (isAuthenticated)}}
             <div class="pagetitle">
                 <h1>{{title}}</h1>
                 <nav>
@@ -155,7 +155,7 @@
                     </ol>
                 </nav>
             </div><!-- End Page Title -->
-        {{!-- {{/if}} --}}
+        {{/if}}
 
         <section class="section">
             {{{body}}}
@@ -171,15 +171,17 @@
 
     <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
     <script src="/js/jquery-3.7.1.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
 
     <script src="/js/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+
     <script src="/js/bootstrap.bundle.js"></script>
     <script src="/js/sweetalert.min.js"></script>
     <script src="/css/simple-datatables/simple-datatables.js"></script>
     <script src="/css/apexcharts/apexcharts.min.js"></script>
     <script src="/js/main.js"></script>
     <script src="/js/addons.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/v/bs5/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-html5-2.3.6/b-print-2.3.6/r-2.4.1/sb-1.4.2/sp-2.1.2/datatables.min.js"></script>

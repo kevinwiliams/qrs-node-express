@@ -1,5 +1,6 @@
 const sequelize = require('../config/db').sequelize;
 const express = require('express');
+const session = require('express-session');
 const bcrypt = require('bcrypt');
 
 // GET: /Account/Login
@@ -16,11 +17,9 @@ const getLogin = (req, res) => {
 const postLogin = async (req, res) => {
     const { email, password } = req.body;
     try {
-
-        
         // Query the database to find the user by username
         const result = await sequelize.query(`SELECT * FROM [dbo].[AspNetUsers] WHERE [UserName] = '${email}'`, { type: sequelize.QueryTypes.SELECT });
-        console.log('result', result);
+        // console.log('result', result);
         const user = result[0];
         if (!user) {
             res.render('auth/login', { error: 'Invalid username or password', layout: 'blank' });
@@ -49,7 +48,7 @@ const postLogin = async (req, res) => {
             req.session.user.role = userData.Role;
             req.session.user.accountId = userData.AccountID;
         }
-        console.log('req.session.user', req.session.user);
+        // console.log('req.session.user', req.session.user);
 
         req.session.isAuthenticated = true;
         res.redirect('/dashboard'); // Redirect to home page
