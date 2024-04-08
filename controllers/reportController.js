@@ -173,7 +173,12 @@ async function filterTransactionsReport(req, res) {
         const result = await sequelize.query(sql, { type: QueryTypes.SELECT, replacements: queryParams });
 
         // Send the result as JSON response
-        res.json(result);
+        // res.json(result);
+
+        res.render('report/transactions', { transactionReport: result, userData: req.session.userData,
+            layout: 'layout', title: 'Transactions Report', DateTime: new Date().toISOString()
+        });
+        
     } catch (error) {
         // Handle errors
         console.error('Error fetching transactions report:', error);
