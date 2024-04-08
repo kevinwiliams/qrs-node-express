@@ -37,8 +37,8 @@ async function getSupervisorReport(req, res) {
         // Send the result as JSON response
         //res.json(result);
         // Render the filtered data to the report/supervisor page
-        res.render('report/supervisor', { supervisorReport: result, supervisors: supervisorList,
-            layout: 'layout', // Specify the layout template
+        res.render('report/supervisor', { supervisorReport: result, supervisors: supervisorList, userData: req.session.userData,
+            layout: 'layout', title: 'Supervisor Report'
         });
     } catch (error) {
         // Handle errors
@@ -126,7 +126,10 @@ async function getTransactionsReport(req, res) {
         const result = await sequelize.query(sql, { type: QueryTypes.SELECT });
 
         // Send the result as JSON response
-        res.json(result);
+        // res.json(result);
+        res.render('report/transactions', { transactionReport: result, userData: req.session.userData,
+            layout: 'layout', title: 'Transactions Report', DateTime: new Date().toISOString()
+        });
     } catch (error) {
         // Handle errors
         console.error('Error fetching transactions report:', error);

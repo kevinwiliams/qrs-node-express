@@ -113,11 +113,7 @@ connectDB();
 
 // Define routes
 app.get('/', (req, res) => {
-    res.render('index', {
-        layout: 'layout',
-        pageTitle: 'Home Page',
-        text: 'World'
-    });
+    res.redirect('/auth/login');
 });
 
 // Import and use route handlers
@@ -141,6 +137,7 @@ app.use('/activity', activityRouter)
 
 const reportRouter = require('./routes/report')
 app.use('/report', reportRouter)
+
 // Start the server
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);

@@ -39,7 +39,7 @@ async function indexHandler(req, res) {
             const isAuthenticated = req.session.isAuthenticated;
             if (userData.UserRole === "Circulation" || userData.UserRole === "Admin") {
                 const activityLogs = await getRecentActivities();
-                res.render('dashboard/index', { userData, activityLogs, layout: 'layout' });
+                res.render('dashboard/index', { userData, activityLogs, layout: 'layout', title: 'Dashboard' });
             } else if (userData.UserRole === "Supervisor") {
                 res.redirect('/retailer');
             } else if (userData.UserRole === "Retailer") {
@@ -71,7 +71,7 @@ async function profileHandler(req, res) {
             return;
         }
 
-        res.render('profile', { profile, userData: req.session.userData });
+        res.render('profile', { profile, userData: req.session.userData, title: 'Profile'  });
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('Internal Server Error');

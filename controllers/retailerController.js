@@ -157,7 +157,7 @@ module.exports = {
             // Render the view with the retrieved data
             res.render('retailer/index', {
                 layout: 'layout', // Specify the layout template
-                pageTitle: 'Retailers / Agents', // Pass additional data to the layout
+                title: 'Retailers / Agents', // Pass additional data to the layout
                 retailers: result,
                 circproUsers: retailerCnt,
                 maxDistId: maxDistributionId,

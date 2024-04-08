@@ -10,7 +10,7 @@ const getLogin = (req, res) => {
         res.redirect('/dashboard');
     }
     const { returnUrl } = req.query;
-    res.render('auth/login', {  layout: 'blank', returnUrl });
+    res.render('auth/login', {  layout: 'blank', returnUrl, title: 'Login'});
 };
 
 // POST: /Account/Login
@@ -63,7 +63,7 @@ const postLogin = async (req, res) => {
 // GET: /Account/Register
 const getRegister = (req, res) => {
     // Render the registration form
-    res.render('register', { layout: 'layout'});
+    res.render('register', { layout: 'layout', title: 'Register'});
 };
 
 // POST: /Account/Register
@@ -85,7 +85,7 @@ const postRegister = async (req, res) => {
 // GET: /Account/ForgotPassword
 const getForgotPassword = (req, res) => {
     // Render the forgot password form
-    res.render('forgotpassword', { layout: 'layout' });
+    res.render('forgotpassword', { layout: 'layout' , title: 'Forgot Password'});
 };
 
 // POST: /Account/ForgotPassword
@@ -105,7 +105,7 @@ const postForgotPassword = async (req, res) => {
 const getResetPassword = (req, res) => {
     const { code } = req.params;
     // Render the reset password form with the code parameter
-    res.render('resetpassword', { code,  layout: 'layout' });
+    res.render('resetpassword', { code,  layout: 'layout', title: 'Reset Password'});
 };
 
 // POST: /Account/ResetPassword
@@ -124,7 +124,7 @@ const postResetPassword = async (req, res) => {
 // GET: /Account/ResetPasswordConfirmation
 const getResetPasswordConfirmation = (req, res) => {
     // Render the reset password confirmation page
-    res.render('resetpasswordconfirmation', { layout: 'layout' });
+    res.render('resetpasswordconfirmation', { layout: 'layout', title: 'Reset Password Confirmation'});
 };
 
 // POST: /Account/LogOff
