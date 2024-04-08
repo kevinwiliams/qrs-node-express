@@ -124,10 +124,13 @@ async function updateReturns(req, res) {
         // Rearrange the parts into "YYYY-MM-DD" format
         const splitDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
         // Parse publication date
-        const parsedPublicationDate = new Date(splitDate);
+        const parsedPublicationDate = moment(splitDate).add(1, 'day').format('YYYY-MM-DD');
         
         // Update return amount in the database
-        const pubEntry = await CircProTranx.findOne({ where: { AccountID: accountId, PublicationDate: parsedPublicationDate } });
+        const pubEntry = await CircProTranx.findOne({
+            where: { AccountID: accountId, PublicationDate: parsedPublicationDate },
+            order: [['UpdatedAt', 'DESC']]
+          });
         
         if (pubEntry) {
             let retStatus = 'Open';

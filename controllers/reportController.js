@@ -50,6 +50,9 @@ async function getSupervisorReport(req, res) {
 // Function to filter supervisor report
 async function filterSupervisorReport(req, res) {
     try {
+        if(!req.session.isAuthenticated){
+            res.redirect('/auth/login');
+        }
         const { supervisors, startDate, endDate } = req.body;
 
         // Define the SQL query
@@ -100,8 +103,8 @@ async function filterSupervisorReport(req, res) {
         // Send the result as JSON response
         //res.json(result);
         // Render the filtered data to the report/supervisor page
-        res.render('report/supervisor', { supervisorReport: result, supervisors: supervisorList,
-            layout: 'layout', // Specify the layout template
+        res.render('report/supervisor', { supervisorReport: result, supervisors: supervisorList, userData: req.session.userData,
+            layout: 'layout', title: 'Supervisor Report'
         });
     } catch (error) {
         // Handle errors
@@ -113,6 +116,7 @@ async function filterSupervisorReport(req, res) {
 // Function to fetch transactions report
 async function getTransactionsReport(req, res) {
     try {
+        
         if(!req.session.isAuthenticated){
             res.redirect('/auth/login');
         }
@@ -178,7 +182,7 @@ async function filterTransactionsReport(req, res) {
         res.render('report/transactions', { transactionReport: result, userData: req.session.userData,
             layout: 'layout', title: 'Transactions Report', DateTime: new Date().toISOString()
         });
-        
+
     } catch (error) {
         // Handle errors
         console.error('Error fetching transactions report:', error);
