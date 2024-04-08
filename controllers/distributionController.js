@@ -101,10 +101,11 @@ async function account(req, res) {
                 RetailerName,
                 EmailAddress,
                 PhoneNumber,
-                CellNumber
+                CellNumber,
+                userData: req.session.userData
             });
         } else {
-            res.render('distribution/account', {  layout: 'layout', // Specify the layout template
+            res.render('distribution/account', {  layout: 'layout', userData: req.session.userData,
             distributions: [] });
         }
     } catch (error) {
@@ -115,7 +116,8 @@ async function account(req, res) {
 
 async function updateReturns(req, res) {
     try {
-        const { accountId, returnAmount, drawAmount, confirmAmount, publicationDate, loggedEmail, userRole } = req.body;
+        const { accountId, returnAmount, drawAmount, confirmAmount, publicationDate, loggedEmail } = req.body;
+        const userRole = req.session.userData.UserRole;
         // Split the date string by "/"
         const parts = publicationDate.split('/');
 

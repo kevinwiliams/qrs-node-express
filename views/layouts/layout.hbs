@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="/css/apexcharts/apexcharts.css">
     <link rel="stylesheet" href="/css/simple-datatables/style.css?v=1.1">
 </head>
-<body class="{{asideClass}}">
+<body class="">
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">
         <div class="d-flex align-items-center justify-content-between">
@@ -92,6 +92,23 @@
         <!-- ======= Sidebar ======= -->
         <aside id="sidebar" class="sidebar">
             <ul class="sidebar-nav" id="sidebar-nav">
+                
+                {{#if (isInRole "Retailer")}}
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="{{homeUrl}}">
+                            <i class="bi bi-grid"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                {{/if}}
+                {{#if (isInRole "Supervisor")}}
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="{{retailerUrl}}">
+                            <i class="bi bi-grid"></i>
+                            <span>Home</span>
+                        </a>
+                    </li>
+                {{/if}}
                 {{#if (or isInRole "Circulation" isInRole "Admin")}}
                     <li class="nav-item">
                         <a class="nav-link collapsed" href="/dashboard">
@@ -123,22 +140,6 @@
                                 </a>
                             </li>
                         </ul>
-                    </li>
-                {{/if}}
-                {{#if (isInRole "Retailer")}}
-                    <li class="nav-item">
-                        <a class="nav-link collapsed" href="{{homeUrl}}">
-                            <i class="bi bi-grid"></i>
-                            <span>Home</span>
-                        </a>
-                    </li>
-                {{/if}}
-                {{#if (isInRole "Supervisor")}}
-                    <li class="nav-item">
-                        <a class="nav-link collapsed" href="{{retailerUrl}}">
-                            <i class="bi bi-grid"></i>
-                            <span>Home</span>
-                        </a>
                     </li>
                 {{/if}}
             </ul>
