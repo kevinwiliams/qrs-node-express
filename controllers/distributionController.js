@@ -32,6 +32,11 @@ async function index(req, res) {
 
 async function account(req, res) {
     try {
+
+        if(!req.session.isAuthenticated){
+            res.redirect('/auth/login');
+        }
+
         const { id } = req.params;
 
         const isLoaded = await isInitLoad(id);

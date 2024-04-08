@@ -6,6 +6,10 @@ const { Op } = require('sequelize');
 // Function to fetch supervisor report
 async function getSupervisorReport(req, res) {
     try {
+
+        if(!req.session.isAuthenticated){
+            res.redirect('/auth/login');
+        }
         // Define the SQL query
         const sql = `
             SELECT UserName, EmailAddress, AccountID, RetailerName, Company, RetailerAddress, PublicationDate, TotalReturnAmount, TotalDistributionAmount, CreatedAt
@@ -109,6 +113,9 @@ async function filterSupervisorReport(req, res) {
 // Function to fetch transactions report
 async function getTransactionsReport(req, res) {
     try {
+        if(!req.session.isAuthenticated){
+            res.redirect('/auth/login');
+        }
         // Define the SQL query
         const sql = `
             SELECT TOP 30 AccountID, RetailerName, Company, RetailerAddress, PublicationDate, TotalReturnAmount, TotalConfirmedAmount, TotalDistributionAmount, CreatedAt, Status

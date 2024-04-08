@@ -125,8 +125,9 @@ async function loadNewRetailers(id) {
 module.exports = {
     index: async (req, res) => {
         try {
-            // Retrieve user data from the session
-            // const { error, userRole, userName } = req.session.userData;
+                if(!req.session.isAuthenticated){
+                    res.redirect('/auth/login');
+                }
     
             // Use Sequelize to fetch retailer data
             const sql = `SELECT DISTINCT
@@ -146,7 +147,7 @@ module.exports = {
                     FROM CircproUsers U
                     JOIN CircProAddresses A ON U.UserID = A.UserID`;
 
-        const result = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
+            const result = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
 
     
             // Calculate retailer count and max distribution ID
@@ -160,9 +161,8 @@ module.exports = {
                 retailers: result,
                 circproUsers: retailerCnt,
                 maxDistId: maxDistributionId,
-                // error,
-                // userRole,
-                // userName
+                userData: req.session.userData,
+                
             });
 
 

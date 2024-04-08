@@ -73,7 +73,7 @@
                                 <hr class="dropdown-divider">
                             </li>
                             <li>
-                                <form id="logoutForm" class="navbar-right" action="/account/logoff" method="post">
+                                <form id="logoutForm" class="navbar-right" action="/auth/logoff" method="post">
                                     <input type="hidden" name="__RequestVerificationToken" value="{{antiForgeryToken}}">
                                     <a class="dropdown-item d-flex align-items-center" href="javascript:document.getElementById('logoutForm').submit()">
                                         <i class="bi bi-box-arrow-right"></i>

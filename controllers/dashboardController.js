@@ -26,7 +26,6 @@ class TransactionDataViewModel {
 
 async function indexHandler(req, res) {
     try {
-        console.log('isAuthenticated', req.session.isAuthenticated);
 
         if (req.session.isAuthenticated) {
             const userData = {

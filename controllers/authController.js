@@ -130,9 +130,10 @@ const getResetPasswordConfirmation = (req, res) => {
 // POST: /Account/LogOff
 const postLogout = (req, res) => {
     try {
-        // Implement your logout logic here (e.g., clearing session/cookie)
         delete req.session.user; // Example: Clear user session on logout
-        res.redirect('auth/login');
+        delete req.session.userData; // Example: Clear user session on logout
+        delete req.session.isAuthenticated; // Example: Clear user session on logout
+        res.redirect('/auth/login');
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
