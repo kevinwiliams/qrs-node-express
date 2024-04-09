@@ -1,5 +1,5 @@
 const Util = require('../helpers/utils'); // Import Util model
-const Retailer = require('../models/retailer'); // Import Retailer model
+const AspNetRoles = require('../models/AspNetRoles'); // Import Retailer model
 const CircproUsers = require('../models/CircproUsers'); // Import the CircproUsers model
 const CircProAddress = require('../models/CircProAddresses'); // Import the CircProAddress model
 const AspNetUsers = require('../models/AspNetUsers');
@@ -66,11 +66,14 @@ async function loadNewRetailers(id) {
                         });
                 
                         // Assign user role based on email domain
-                        const userRole = (item.EMAIL.toLowerCase().includes("jamaicaobserver.com")) ? "Circulation" : "Retailer";
-                        
+                        const Role = (item.EMAIL.toLowerCase().includes("jamaicaobserver.com")) ? "Circulation" : "Retailer";
+
+                        const dbRoles = await AspNetRoles.findOne({ where: { Name: Role } });
+                        const userRole = dbRoles.dataValues;
+
                         await AspNetUserRoles.create({
                             UserId: newAccount.Id,
-                            Role: userRole
+                            RoleId: userRole.Id
                         });
 
                         // Create CircproUsers object
