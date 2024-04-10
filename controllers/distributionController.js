@@ -1,6 +1,7 @@
 const sequelize = require('../config/db').sequelize;
 const axios = require('axios');
 const moment = require('moment');
+const CircproUsers = require('../models/CircproUsers'); // Assuming you have defined the Sequelize models
 const CircProTranx = require('../models/CircProTransactions'); // Assuming you have defined the Sequelize models
 const QRSActivityLog = require('../models/QRSActivityLogs'); // Assuming you have defined the Sequelize models
 const Util = require('../helpers/utils');
@@ -300,19 +301,23 @@ async function loadTransactions(accountID, startDate, endDate, userId, emailAddr
         if (response.status === 200) {
             const resultTrans = response.data;
 
+            const userEntry = await CircproUsers.findOne({
+                where: { AccountID: accountID }
+              });
+
             for (const item of resultTrans) {
                 // Assuming circUser is retrieved successfully using DistributionID
                 const circProTransactions = new CircProTranx({
-                    UserID: userId,
+                    UserID: userEntry.UserID,
                     AccountID: item.DIST_ACCTNBR,
                     PublicationDate: item.PUBLISH,
                     ConfirmDate: item.PUBLISH,
                     ConfirmedAmount: item.RETTOT,
-                    ConfirmReturn: true,
+                    ConfirmReturn: (item.PUBLISH < Date.now() - 30 * 24 * 60 * 60 * 1000) ? true : false,
                     CreatedAt: item.PUBLISH,
                     UpdatedAt: new Date(),
                     Status: (item.PUBLISH < Date.now() - 30 * 24 * 60 * 60 * 1000) ? "Closed" : "Open",
-                    EmailAddress: emailAddress,
+                    EmailAddress: userEntry.EmailAddress,
                     ReturnAmount: item.RETTOT,
                     ReturnDate: item.PUBLISH,
                     DistributionAmount: item.DRAWTOT,
