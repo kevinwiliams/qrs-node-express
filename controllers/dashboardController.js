@@ -2,8 +2,7 @@ const { QueryTypes } = require('sequelize');
 const sequelize = require('../config/db').sequelize;
 const QRSActivityLog = require('../models/QRSActivityLogs'); 
 const CircproUsers = require('../models/CircproUsers'); 
-const CircProAddress = require('../models/CircProAddresses'); 
-const CircProTranx = require('../models/CircProTransactions'); 
+const CircProAddresses = require('../models/CircProAddresses'); 
 
 class TransactionData {
     constructor(periodNumber, totalDistributionAmount, totalReturnAmount, totalConfirmedAmount, periodText) {
@@ -60,19 +59,21 @@ async function indexHandler(req, res) {
     }
 }
 
-
-
 async function profileHandler(req, res) {
     try {
-        const accountId = req.session.accountId;
+        if(!req.session.isAuthenticated){
+            res.redirect('/auth/login');
+        }
+        
+        const userData = req.session.userData;
+        const accountId = (userData) ? userData.AccountId : null;
         const profile = await getProfile(accountId);
-
         if (!profile) {
-            res.render('index');
+            res.render('dashboard', {layout:'layout'});
             return;
         }
 
-        res.render('profile', { profile, userData: req.session.userData, title: 'Profile'  });
+        res.render('dashboard/profile', { profile, userData: userData, title: 'Profile' , layout:'layout'});
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('Internal Server Error');
@@ -109,13 +110,42 @@ async function getRecentActivities() {
 
 async function getProfile(accountId) {
     try {
-        const profile = await CircproUsers.findOne({
-            where: { AccountID: accountId },
-            include: [{
-                model: CircProAddress,
-                as: 'RetailerAddress'
-            }]
-        });
+        console.log('accountId', accountId);
+        const sql =`SELECT DISTINCT
+        U.AccountID, 
+        U.DistributionID,
+        U.FirstName, U.LastName,
+        CONCAT(U.FirstName, ' ', U.LastName) AS RetailerName,
+        U.EmailAddress,
+        U.Company,
+        A.AddressLine1,
+        A.AddressLine2,
+        A.CityTown,
+        NULLIF(
+            COALESCE(LTRIM(RTRIM(A.AddressLine1)) + ', ', '') + 
+            COALESCE(LTRIM(RTRIM(A.AddressLine2)) + ', ', '') + 
+            COALESCE(LTRIM(RTRIM(A.CityTown)), ''), 
+            ''
+        ) AS RetailerAddress,
+        U.PhoneNumber,
+        U.CellNumber
+    FROM [dbo].[CircproUsers] U
+    JOIN [dbo].[CircProAddresses] A ON U.UserID = A.UserID where U.AccountID = :accountId`;
+
+    const result = await sequelize.query(sql, { 
+        type: QueryTypes.SELECT,
+        replacements: { accountId: accountId } 
+    });
+        const profile = result[0];
+        // const profile = await CircproUsers.findOne({
+        //     where: { AccountID: accountId },
+        //     include: [{
+        //         model: CircProAddresses,
+        //         as: 'RetailerAddress'
+        //     }]
+        // });
+
+        console.log('profile', profile);
 
         return profile;
     } catch (error) {

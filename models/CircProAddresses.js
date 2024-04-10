@@ -1,5 +1,6 @@
-const { DataTypes } = require('sequelize');
+const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../config/db').sequelize;
+const CircproUsers = require('../models/CircproUsers');
 
 const CircProAddresses = sequelize.define('CircProAddresses', {
     AddressID: {
@@ -54,7 +55,11 @@ const CircProAddresses = sequelize.define('CircProAddresses', {
 }, {
     tableName: 'CircProAddresses',
     timestamps: false,
+    modelName: 'CircProAddresses'
 });
+
+// Define association with CircproUsers
+CircProAddresses.belongsTo(CircproUsers, { foreignKey: 'AddressID' });
 
 // Sync the model with the database
 sequelize.sync()
