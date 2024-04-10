@@ -82,8 +82,34 @@ async function profileHandler(req, res) {
 
 async function updateProfileHandler(req, res) {
     try {
-        // Handle updating profile logic
-        res.redirect('/profile');
+        const userInfo = req.body;
+        const userEntry = await CircproUsers.findOne({
+            where: { AccountID: userInfo.AccountID }
+          });
+
+        if (userEntry) {
+            userEntry.FirstName = userInfo.FirstName;
+            userEntry.LastName = userInfo.LastName;
+            userEntry.Company = userInfo.Company;
+            userEntry.PhoneNumber = userInfo.PhoneNumber;
+            userEntry.CellNumber = userInfo.CellNumber;
+            userEntry.NotifyEmail = (userInfo.NotifyEmail) ? userInfo.NotifyEmail : false;
+            await userEntry.save();
+        }
+
+        const userAddress = await CircProAddresses.findOne({
+            where: { AccountID: userInfo.AccountID }
+        });
+
+        if (userAddress) {
+        userAddress.AddressLine1 = userInfo.AddressLine1;
+        userAddress.AddressLine2 = userInfo.AddressLine2;
+        userAddress.CityTown = userInfo.CityTown;
+        userAddress.StateParish = userInfo.StateParish;
+        userAddress.save();
+        }
+
+        res.redirect('/dashboard/profile');
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('Internal Server Error');
@@ -110,43 +136,33 @@ async function getRecentActivities() {
 
 async function getProfile(accountId) {
     try {
-        console.log('accountId', accountId);
         const sql =`SELECT DISTINCT
-        U.AccountID, 
-        U.DistributionID,
-        U.FirstName, U.LastName,
-        CONCAT(U.FirstName, ' ', U.LastName) AS RetailerName,
-        U.EmailAddress,
-        U.Company,
-        A.AddressLine1,
-        A.AddressLine2,
-        A.CityTown,
-        NULLIF(
-            COALESCE(LTRIM(RTRIM(A.AddressLine1)) + ', ', '') + 
-            COALESCE(LTRIM(RTRIM(A.AddressLine2)) + ', ', '') + 
-            COALESCE(LTRIM(RTRIM(A.CityTown)), ''), 
-            ''
-        ) AS RetailerAddress,
-        U.PhoneNumber,
-        U.CellNumber
-    FROM [dbo].[CircproUsers] U
-    JOIN [dbo].[CircProAddresses] A ON U.UserID = A.UserID where U.AccountID = :accountId`;
+            U.AccountID, 
+            U.DistributionID,
+            U.FirstName, U.LastName,
+            CONCAT(U.FirstName, ' ', U.LastName) AS RetailerName,
+            U.EmailAddress,
+            U.Company,
+            A.AddressLine1,
+            A.AddressLine2,
+            A.CityTown,
+            NULLIF(
+                COALESCE(LTRIM(RTRIM(A.AddressLine1)) + ', ', '') + 
+                COALESCE(LTRIM(RTRIM(A.AddressLine2)) + ', ', '') + 
+                COALESCE(LTRIM(RTRIM(A.CityTown)), ''), 
+                ''
+            ) AS RetailerAddress,
+            U.PhoneNumber,
+            U.CellNumber, U.NotifyEmail
+        FROM [dbo].[CircproUsers] U
+        JOIN [dbo].[CircProAddresses] A ON U.UserID = A.UserID where U.AccountID = :accountId`;
 
-    const result = await sequelize.query(sql, { 
-        type: QueryTypes.SELECT,
-        replacements: { accountId: accountId } 
-    });
+        const result = await sequelize.query(sql, { 
+            type: QueryTypes.SELECT,
+            replacements: { accountId: accountId } 
+        });
+
         const profile = result[0];
-        // const profile = await CircproUsers.findOne({
-        //     where: { AccountID: accountId },
-        //     include: [{
-        //         model: CircProAddresses,
-        //         as: 'RetailerAddress'
-        //     }]
-        // });
-
-        console.log('profile', profile);
-
         return profile;
     } catch (error) {
         console.error('Error:', error);

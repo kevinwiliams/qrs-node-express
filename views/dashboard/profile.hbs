@@ -8,7 +8,7 @@
 
                     <img src="/img/profile-pic.jpg" alt="Profile" class="rounded-circle">
                     <h2>{{profile.RetailerName}}</h2>
-                    <h3>Retailer - {{profile.AccountID}}</h3>
+                    <h3>{{userData.UserRole}} - {{profile.AccountID}}</h3>
                     <div class="social-links mt-2 d-none">
                         <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
                         <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
@@ -86,138 +86,138 @@
 
                         <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
 
-    <!-- Profile Edit Form -->
-    <form class="form-horizontal" action="/profile" method="POST" role="form">
-        {{ csrfToken }}
-        {{#if errorMessage}}
-            <p class="text-danger">{{ errorMessage }}</p>
-        {{/if}}
+                            <!-- Profile Edit Form -->
+                            <form class="form-horizontal" action="/dashboard/profile" method="POST" role="form">
+                                {{ csrfToken }}
+                                {{#if errorMessage}}
+                                    <p class="text-danger">{{ errorMessage }}</p>
+                                {{/if}}
 
-        <div class="row mb-3 visually-hidden">
-            <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
-            <div class="col-md-8 col-lg-9">
-                <img src="/assets/img/profile-pic.jpg" alt="Profile">
-                <div class="pt-2">
-                    <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></a>
-                    <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>
-                </div>
-            </div>
-        </div>
-        <input type="hidden" name="profile.AccountID" value="{{ profile.AccountID }}">
+                                <div class="row mb-3 visually-hidden">
+                                    <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        <img src="/assets/img/profile-pic.jpg" alt="Profile">
+                                        <div class="pt-2">
+                                            <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></a>
+                                            <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="hidden" name="AccountID" value="{{ profile.AccountID }}">
 
-        <div class="row mb-3 px-3">
-            <div class="form-check">
-                <input id="profile.NotifyEmail" type="checkbox" name="profile.NotifyEmail" class="form-check-input" />
-                <label class="form-check-label" for="profile.NotifyEmail">
-                    Get notification emails for each return submitted
-                </label>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
-            <div class="col-md-8 col-lg-9">
-                <span class="align-middle pt-2">{{ profile.RetailerName }}</span>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="company" class="col-md-4 col-lg-3 col-form-label">First Name</label>
-            <div class="col-md-8 col-lg-9">
-                <input id="profile.FirstName" type="text" name="profile.FirstName" class="form-control" value="{{ profile.FirstName }}" />
-                {{#if errors.profile.FirstName}}
-                    <p class="text-danger">{{ errors.profile.FirstName }}</p>
-                {{/if}}
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="company" class="col-md-4 col-lg-3 col-form-label">Last Name</label>
-            <div class="col-md-8 col-lg-9">
-                <input id="profile.LastName" type="text" name="profile.LastName" class="form-control" value="{{ profile.LastName }}" />
-                {{#if errors.profile.LastName}}
-                    <p class="text-danger">{{ errors.profile.LastName }}</p>
-                {{/if}}
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="company" class="col-md-4 col-lg-3 col-form-label">Company</label>
-            <div class="col-md-8 col-lg-9">
-                <input id="profile.Company" type="text" name="profile.Company" class="form-control" value="{{ profile.Company }}" />
-                {{#if errors.profile.Company}}
-                    <p class="text-danger">{{ errors.profile.Company }}</p>
-                {{/if}}
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="Address" class="col-md-4 col-lg-3 col-form-label">Address Line 1</label>
-            <div class="col-md-8 col-lg-9">
-                <input id="profile.AddressLine1" type="text" name="profile.AddressLine1" class="form-control" value="{{ profile.AddressLine1 }}" />
-                {{#if errors.RetailerAddress.AddressLine1}}
-                    <p class="text-danger">{{ errors.RetailerAddress.AddressLine1 }}</p>
-                {{/if}}
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="Address" class="col-md-4 col-lg-3 col-form-label">Address Line 2</label>
-            <div class="col-md-8 col-lg-9">
-                <input id="profile.AddressLine2" type="text" name="profile.AddressLine2" class="form-control" value="{{ profile.AddressLine2 }}" />
-                {{#if errors.RetailerAddress.AddressLine2}}
-                    <p class="text-danger">{{ errors.RetailerAddress.AddressLine2 }}</p>
-                {{/if}}
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="Address" class="col-md-4 col-lg-3 col-form-label">Town</label>
-            <div class="col-md-8 col-lg-9">
-                <input id="profile.CityTown" type="text" name="profile.CityTown" class="form-control" value="{{ profile.CityTown }}" />
-                {{#if errors.profile.CityTown}}
-                    <p class="text-danger">{{ errors.profile.CityTown }}</p>
-                {{/if}}
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="Address" class="col-md-4 col-lg-3 col-form-label">Parish</label>
-            <div class="col-md-8 col-lg-9">
-                <input id="profile.StateParish" type="text" name="profile.StateParish" class="form-control" value="{{ profile.StateParish }}" />
-                {{#if errors.profile.StateParish}}
-                    <p class="text-danger">{{ errors.profile.StateParish }}</p>
-                {{/if}}
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="Phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
-            <div class="col-md-8 col-lg-9">
-                <input id="profile.PhoneNumber" type="text" name="profile.PhoneNumber" class="form-control" value="{{ profile.PhoneNumber }}" />
-                {{#if errors.profile.PhoneNumber}}
-                    <p class="text-danger">{{ errors.profile.PhoneNumber }}</p>
-                {{/if}}
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="Phone" class="col-md-4 col-lg-3 col-form-label">Cell</label>
-            <div class="col-md-8 col-lg-9">
-                <input id="profile.CellNumber" type="text" name="profile.CellNumber" class="form-control" value="{{ profile.CellNumber }}" />
-                {{#if errors.profile.CellNumber}}
-                    <p class="text-danger">{{ errors.profile.CellNumber }}</p>
-                {{/if}}
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="email" class="col-md-4 col-lg-3 col-form-label">Email</label>
-            <div class="col-md-8 col-lg-9">
-                <input id="profile.Email" type="email" name="profile.Email" class="form-control" value="{{ profile.Email }}" />
-                {{#if errors.profile.Email}}
-                    <p class="text-danger">{{ errors.profile.Email }}</p>
-                {{/if}}
-            </div>
-        </div>
-        <!-- Add more form fields here as needed -->
+                                <div class="row mb-3 px-3">
+                                    <div class="form-check">
+                                        <input id="NotifyEmail" type="checkbox" name="NotifyEmail" class="form-check-input" value="{{ profile.NotifyEmail }}"/>
+                                        <label class="form-check-label" for="profile.NotifyEmail">
+                                            Get notification emails for each return submitted
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        <span class="align-middle pt-2">{{ profile.RetailerName }}</span>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="company" class="col-md-4 col-lg-3 col-form-label">First Name</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        <input id="FirstName" type="text" name="FirstName" class="form-control" value="{{ profile.FirstName }}" />
+                                        {{#if errors.profile.FirstName}}
+                                            <p class="text-danger">{{ errors.profile.FirstName }}</p>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="company" class="col-md-4 col-lg-3 col-form-label">Last Name</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        <input id="LastName" type="text" name="LastName" class="form-control" value="{{ profile.LastName }}" />
+                                        {{#if errors.profile.LastName}}
+                                            <p class="text-danger">{{ errors.profile.LastName }}</p>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="company" class="col-md-4 col-lg-3 col-form-label">Company</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        <input id="Company" type="text" name="Company" class="form-control" value="{{ profile.Company }}" />
+                                        {{#if errors.profile.Company}}
+                                            <p class="text-danger">{{ errors.profile.Company }}</p>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="Address" class="col-md-4 col-lg-3 col-form-label">Address Line 1</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        <input id="AddressLine1" type="text" name="AddressLine1" class="form-control" value="{{ profile.AddressLine1 }}" />
+                                        {{#if errors.RetailerAddress.AddressLine1}}
+                                            <p class="text-danger">{{ errors.RetailerAddress.AddressLine1 }}</p>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="Address" class="col-md-4 col-lg-3 col-form-label">Address Line 2</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        <input id="AddressLine2" type="text" name="AddressLine2" class="form-control" value="{{ profile.AddressLine2 }}" />
+                                        {{#if errors.RetailerAddress.AddressLine2}}
+                                            <p class="text-danger">{{ errors.RetailerAddress.AddressLine2 }}</p>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="Address" class="col-md-4 col-lg-3 col-form-label">Town</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        <input id="CityTown" type="text" name="CityTown" class="form-control" value="{{ profile.CityTown }}" />
+                                        {{#if errors.profile.CityTown}}
+                                            <p class="text-danger">{{ errors.profile.CityTown }}</p>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="Address" class="col-md-4 col-lg-3 col-form-label">Parish</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        <input id="StateParish" type="text" name="StateParish" class="form-control" value="{{ profile.StateParish }}" />
+                                        {{#if errors.profile.StateParish}}
+                                            <p class="text-danger">{{ errors.profile.StateParish }}</p>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="Phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        <input id="PhoneNumber" type="text" name="PhoneNumber" class="form-control" value="{{ profile.PhoneNumber }}" />
+                                        {{#if errors.profile.PhoneNumber}}
+                                            <p class="text-danger">{{ errors.profile.PhoneNumber }}</p>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="Phone" class="col-md-4 col-lg-3 col-form-label">Cell</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        <input id="CellNumber" type="text" name="CellNumber" class="form-control" value="{{ profile.CellNumber }}" />
+                                        {{#if errors.profile.CellNumber}}
+                                            <p class="text-danger">{{ errors.profile.CellNumber }}</p>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="email" class="col-md-4 col-lg-3 col-form-label">Email</label>
+                                    <div class="col-md-8 col-lg-9">
+                                        <input id="EmailAddress" type="email" name="EmailAddress" class="form-control" value="{{ profile.EmailAddress }}" />
+                                        {{#if errors.profile.EmailAddress}}
+                                            <p class="text-danger">{{ errors.profile.EmailAddress }}</p>
+                                        {{/if}}
+                                    </div>
+                                </div>
+                                <!-- Add more form fields here as needed -->
 
-        <hr />
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-        </div>
-    </form><!-- End Profile Edit Form -->
+                                <hr />
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </div>
+                            </form><!-- End Profile Edit Form -->
 
-</div>
+                        </div>
 
 
                                 
