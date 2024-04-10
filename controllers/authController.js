@@ -34,7 +34,7 @@ const postLogin = async (req, res) => {
 
         const userInfo = await sequelize.query(`SELECT r.[Name] as Role, 
         cu.AccountID, 
-        u.Email
+        u.Email, cu.UserID
         FROM [dbo].[AspNetUsers] u 
         LEFT JOIN [dbo].[CircproUsers] cu ON u.Id = cu.UserID
         JOIN [dbo].[AspNetUserRoles] ur on u.Id = ur.UserId
@@ -47,6 +47,7 @@ const postLogin = async (req, res) => {
         if (userData) {
             req.session.user.role = userData.Role;
             req.session.user.accountId = userData.AccountID;
+            req.session.user.userId = userData.UserID;
         }
         // console.log('req.session.user', req.session.user);
 

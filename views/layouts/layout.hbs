@@ -93,7 +93,7 @@
         <aside id="sidebar" class="sidebar">
             <ul class="sidebar-nav" id="sidebar-nav">
                 
-                {{#if (isInRole "Retailer")}}
+                {{#if (eq userData.UserRole "Retailer")}}
                     <li class="nav-item">
                         <a class="nav-link collapsed" href="{{homeUrl}}">
                             <i class="bi bi-grid"></i>
@@ -101,7 +101,7 @@
                         </a>
                     </li>
                 {{/if}}
-                {{#if (isInRole "Supervisor")}}
+                {{#if (eq userData.UserRole "Supervisor")}}
                     <li class="nav-item">
                         <a class="nav-link collapsed" href="{{retailerUrl}}">
                             <i class="bi bi-grid"></i>
@@ -109,7 +109,7 @@
                         </a>
                     </li>
                 {{/if}}
-                {{#if (or isInRole "Circulation" isInRole "Admin")}}
+                {{#if (or (eq userData.UserRole "Circulation") (eq userData.UserRole "Admin"))}}
                     <li class="nav-item">
                         <a class="nav-link collapsed" href="/dashboard">
                             <i class="bi bi-grid"></i>

@@ -67,10 +67,10 @@ async function loadNewRetailers(id) {
                 
                         // Assign user role based on email domain
                         const Role = (item.EMAIL.toLowerCase().includes("jamaicaobserver.com")) ? "Circulation" : "Retailer";
-
+                        // Get role from databse
                         const dbRoles = await AspNetRoles.findOne({ where: { Name: Role } });
                         const userRole = dbRoles.dataValues;
-
+                        // Create user role
                         await AspNetUserRoles.create({
                             UserId: newAccount.Id,
                             RoleId: userRole.Id

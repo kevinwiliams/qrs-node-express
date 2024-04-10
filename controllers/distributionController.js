@@ -227,7 +227,7 @@ async function getLatest(req, res) {
         const lastDate = await getLastDistDate(id);
         const startDate = lastDate.toISOString().split('T')[0];
         const endDate = new Date().toISOString().split('T')[0];
-        const loadCircTranx = await loadTransactions(id, startDate, endDate);
+        const loadCircTranx = await loadTransactions(id, startDate, endDate, req.session.userData.UserId, req.session.userData.Email);
 
         // Send the retrieved data as a response
         res.status(200).json({ success: loadCircTranx });
@@ -282,7 +282,7 @@ function getLatestDistDate(accountID) {
     }
 }
 
-async function loadTransactions(accountID, startDate, endDate) {
+async function loadTransactions(accountID, startDate, endDate, userId, emailAddress) {
     try {
         // Define the URL of the API endpoint
         const url = process.env.CIRC_PRO_API_LOAD_TRANX;
@@ -303,7 +303,7 @@ async function loadTransactions(accountID, startDate, endDate) {
             for (const item of resultTrans) {
                 // Assuming circUser is retrieved successfully using DistributionID
                 const circProTransactions = new CircProTranx({
-                    UserID: item.UserID,
+                    UserID: userId,
                     AccountID: item.DIST_ACCTNBR,
                     PublicationDate: item.PUBLISH,
                     ConfirmDate: item.PUBLISH,
@@ -312,7 +312,7 @@ async function loadTransactions(accountID, startDate, endDate) {
                     CreatedAt: item.PUBLISH,
                     UpdatedAt: new Date(),
                     Status: (item.PUBLISH < Date.now() - 30 * 24 * 60 * 60 * 1000) ? "Closed" : "Open",
-                    EmailAddress: item.EmailAddress,
+                    EmailAddress: emailAddress,
                     ReturnAmount: item.RETTOT,
                     ReturnDate: item.PUBLISH,
                     DistributionAmount: item.DRAWTOT,

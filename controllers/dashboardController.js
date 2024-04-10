@@ -32,7 +32,8 @@ async function indexHandler(req, res) {
                 UserRole: req.session.user.role,
                 UserName: req.session.user.FullName,
                 Email: req.session.user.Email,
-                AccountId: req.session.user.accountId
+                AccountId: req.session.user.accountId,
+                UserId: req.session.user.userId
             };
 
             req.session.userData = userData;
