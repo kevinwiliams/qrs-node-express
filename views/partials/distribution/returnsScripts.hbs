@@ -38,7 +38,9 @@
 
             // Fetch the PubDate dynamically
             var pubDate = $('#publicationDate').val(); 
-            var formattedPubDate = encodeURIComponent(pubDate.replace(/\//g, '-'));
+            const parsedDate = moment(pubDate, 'DD/MM/YYYY');
+            const formattedPubDate = parsedDate.format('YYYY-MM-DD');
+            //var formattedPubDate = encodeURIComponent(pubDate.replace(/\//g, '-'));
             var url = '/activity/history?id={{AccountID}}';
             url += '&pd=' + formattedPubDate; // Append the PubDate parameter to the URL
             // Update the href attribute of the link with the dynamically generated URL
