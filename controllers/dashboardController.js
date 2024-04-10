@@ -102,11 +102,11 @@ async function updateProfileHandler(req, res) {
         });
 
         if (userAddress) {
-        userAddress.AddressLine1 = userInfo.AddressLine1;
-        userAddress.AddressLine2 = userInfo.AddressLine2;
-        userAddress.CityTown = userInfo.CityTown;
-        userAddress.StateParish = userInfo.StateParish;
-        userAddress.save();
+            userAddress.AddressLine1 = userInfo.AddressLine1;
+            userAddress.AddressLine2 = userInfo.AddressLine2;
+            userAddress.CityTown = userInfo.CityTown;
+            userAddress.StateParish = userInfo.StateParish;
+            userAddress.save();
         }
 
         res.redirect('/dashboard/profile');
@@ -145,11 +145,12 @@ async function getProfile(accountId) {
             U.Company,
             A.AddressLine1,
             A.AddressLine2,
-            A.CityTown,
+            A.CityTown, A.StateParish,
             NULLIF(
                 COALESCE(LTRIM(RTRIM(A.AddressLine1)) + ', ', '') + 
                 COALESCE(LTRIM(RTRIM(A.AddressLine2)) + ', ', '') + 
-                COALESCE(LTRIM(RTRIM(A.CityTown)), ''), 
+                COALESCE(LTRIM(RTRIM(A.CityTown)) + ', ', '') + 
+                COALESCE(LTRIM(RTRIM(A.StateParish)), ''), 
                 ''
             ) AS RetailerAddress,
             U.PhoneNumber,
