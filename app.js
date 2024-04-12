@@ -48,19 +48,19 @@ const hbs = exphbs.create({
     extname: '.hbs',
     helpers: {
         formatListDate: function(date) {
-            return moment(date).format('DD-MMM-YYYY');
+            return moment(date).add(1, 'days').format('DD-MMM-YYYY');
         },
         formatHistDate: function(date) {
-            return moment(date).format('DD-MM-YYYY');
+            return moment(date).add(1, 'days').format('DD-MM-YYYY');
         },
         formatPubDate: function(date) {
-            return moment(date).format('DD/MM/YYYY');
+            return moment(date).add(1, 'days').format('DD/MM/YYYY');
         },
         formatDBDate: function(date) {
-            return moment(date).format('YYYY-MM-DD');
+            return moment(date).add(1, 'days').format('YYYY-MM-DD');
         },
         formatTimeDate: function(date) {
-            return moment(date).format('DD-MMM-YYYY h:mmA');
+            return moment(date).add(1, 'days').format('DD-MMM-YYYY h:mmA');
         },
         eq: function(arg1, arg2, options) {
             return Handlebars.helpers.eq(arg1, arg2, options);

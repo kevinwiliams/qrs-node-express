@@ -128,7 +128,7 @@ async function updateReturns(req, res) {
         // Rearrange the parts into "YYYY-MM-DD" format
         const splitDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
         // Parse publication date
-        const parsedPublicationDate = moment(splitDate).add(1, 'day').format('YYYY-MM-DD');
+        const parsedPublicationDate = moment(splitDate).format('YYYY-MM-DD');
         
         // Update return amount in the database
         const pubEntry = await CircProTranx.findOne({
@@ -156,8 +156,6 @@ async function updateReturns(req, res) {
                         userProfile: userProfile[0]
                     };
 
-                    console.log('accountId', accountId);
-                    console.log('dataToRender', dataToRender);
                     const subject = `QRS Returns Notification - ${accountId}`;
                     const body = await Util.renderViewToString('./views/emails/confirmreturns_retailer.hbs', dataToRender);
                     //const emailSent = await Util.sendMail('williamskt@jamaicabserver.com', subject, body);
@@ -184,8 +182,6 @@ async function updateReturns(req, res) {
                     userProfile: userProfile[0]
                 };
 
-                console.log('accountId', accountId);
-                console.log('dataToRender', dataToRender);
                 const subject = `QRS Returns Closed Notification - ${pubEntry.AccountID}`;
                 const body = await Util.renderViewToString('./views/emails/confirmreturn.hbs', dataToRender);
                 //const emailSent = await Util.sendMail('williamskt@jamaicabserver.com', subject, body);

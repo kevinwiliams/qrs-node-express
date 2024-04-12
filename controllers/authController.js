@@ -64,7 +64,7 @@ const postLogin = async (req, res) => {
 // GET: /Account/Register
 const getRegister = (req, res) => {
     // Render the registration form
-    res.render('register', { layout: 'layout', title: 'Register'});
+    res.render('auth/register', { layout: 'layout', title: 'Register'});
 };
 
 // POST: /Account/Register
@@ -109,7 +109,7 @@ const postForgotPassword = async (req, res) => {
         const body = await Util.renderViewToString('./views/emails/passwordreset.hbs', dataToRender);
         //const emailSent = await Util.sendMail(email, subject, body);
   
-        res.render('forgotpasswordconfirmation', { layout: 'layout' });
+        res.render('auth/forgotpasswordconfirmation', { layout: 'layout' });
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
@@ -120,7 +120,7 @@ const postForgotPassword = async (req, res) => {
 const getResetPassword = (req, res) => {
     const { code } = req.params;
     // Render the reset password form with the code parameter
-    res.render('resetpassword', { code,  layout: 'layout', title: 'Reset Password'});
+    res.render('auth/resetpassword', { code,  layout: 'layout', title: 'Reset Password'});
 };
 
 // POST: /Account/ResetPassword
@@ -139,7 +139,7 @@ const postResetPassword = async (req, res) => {
 // GET: /Account/ResetPasswordConfirmation
 const getResetPasswordConfirmation = (req, res) => {
     // Render the reset password confirmation page
-    res.render('resetpasswordconfirmation', { layout: 'layout', title: 'Reset Password Confirmation'});
+    res.render('auth/resetpasswordconfirmation', { layout: 'layout', title: 'Reset Password Confirmation'});
 };
 
 // POST: /Account/LogOff

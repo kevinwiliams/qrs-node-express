@@ -27,7 +27,7 @@ async function getLogs(req, res) {
 
 async function getHistory(req, res) {
     try {
-        console.log('Params:', req.query);
+        // console.log('Params:', req.query);
         const userData = getUserData(req);
         const parsedPubDate = new Date(req.query.pd);
         const qRSActivityLogs = await QRSActivityLogs.findAll({

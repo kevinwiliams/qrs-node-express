@@ -1,8 +1,11 @@
 const { QueryTypes } = require('sequelize');
 const sequelize = require('../config/db').sequelize;
 const QRSActivityLog = require('../models/QRSActivityLogs'); 
+const AspNetUsers = require('../models/AspNetUsers');
 const CircproUsers = require('../models/CircproUsers'); 
 const CircProAddresses = require('../models/CircProAddresses'); 
+const bcrypt = require('bcrypt');
+
 
 class TransactionData {
     constructor(periodNumber, totalDistributionAmount, totalReturnAmount, totalConfirmedAmount, periodText) {
@@ -289,11 +292,78 @@ async function getChartData(req, res) {
     }
 };
 
+async function getChangePassword(req, res){
+
+    if(!req.session.isAuthenticated){
+        res.redirect('/auth/login');
+    }
+    const userData = req.session.userData;
+    // Render the reset password form with the code parameter
+    res.render('dashboard/changepassword', { userData: userData, layout: 'layout', title: 'Change Password'});
+};
+
+async function postChangePassword(req, res){
+    try {
+
+        if(!req.session.isAuthenticated){
+            res.redirect('/auth/login');
+        }
+
+        const { oldPassword, newPassword } = req.body;
+
+        const user = await AspNetUsers.findOne({ where: { Email: req.session.userData.Email } });
+        const hashedPassword = await bcrypt.hash(oldPassword, 10);
+        const isMatch = await bcrypt.compare(hashedPassword, user.PasswordHash);
+
+        if(isMatch){
+            const result = await changePasswordDB(user.UserId, newPassword);
+
+            if (result.success) {
+                return res.redirect('/dashboard/changepassword?Message=ChangePasswordSuccess');
+            } else {
+                res.locals.errors = result.errors;
+                return res.render('dashboard/changepassword', { model: req.body });
+            }
+        } else{
+            
+            return res.render('dashboard/changepassword', { model: req.body });
+        }
+        
+    } catch (error) {
+        console.error('Error changing password:', error);
+        return res.status(500).send('Internal Server Error'); 
+    }
+};
+
+async function changePasswordDB(userId, newPassword) {
+    try {
+        // Find the user by userId
+        const user = await AspNetUsers.findByPk(userId);
+        if (!user) {
+            return { success: false, errors: ['User not found'] };
+        }
+
+        // Update the user's password hash
+        user.PasswordHash = await bcrypt.hash(newPassword, 10);
+
+        // Save the updated user
+        await user.save();
+
+        return { success: true };
+    } catch (error) {
+        console.error('Error changing password:', error);
+        return { success: false, errors: ['Internal Server Error'] };
+    }
+}
+
 module.exports = {
     indexHandler,
     profileHandler,
     updateProfileHandler,
     getRecentActivities,
     getProfile,
-    getChartData
+    getChartData,
+    getChangePassword,
+    postChangePassword
+    
 };

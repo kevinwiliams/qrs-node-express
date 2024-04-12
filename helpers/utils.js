@@ -196,10 +196,10 @@ function getOSName(userAgent) {
 }
 
 function getIPAddress(req) {
-    console.log('req', req.connection.remoteAddress);
+    // console.log('req', req.connection.remoteAddress);
     
     const ipAddress = requestIP.getClientIp(req);
-    console.log('ipAddress', ipAddress);
+    // console.log('ipAddress', ipAddress);
     // If the IP address is a local IP, try to resolve the hostname
     // if (isLocalIP(ipAddress)) {
     //     try {

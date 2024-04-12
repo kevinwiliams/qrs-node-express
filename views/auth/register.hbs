@@ -1,0 +1,72 @@
+<!-- views/register.hbs -->
+
+<!-- Title -->
+<h2>Register.</h2>
+
+<!-- Form -->
+<form action="/auth/register" method="POST" class="form-horizontal" role="form">
+    {{ csrfToken }} <!-- CSRF token -->
+
+    <!-- RoleName field -->
+    <div class="form-group">
+        <label for="RoleName" class="col-md-2 control-label">Role Name</label>
+        <div class="col-md-10">
+            <select id="RoleName" name="RoleName" class="form-control">
+                {{#each roles}}
+                <option value="{{ this.value }}">{{ this.text }}</option>
+                {{/each}}
+            </select>
+        </div>
+    </div>
+
+    <!-- UserName field -->
+    <div class="form-group">
+        <label for="UserName" class="col-md-2 control-label">User Name</label>
+        <div class="col-md-10">
+            <input type="text" id="UserName" name="UserName" class="form-control">
+        </div>
+    </div>
+
+    <!-- FullName field -->
+    <div class="form-group">
+        <label for="FullName" class="col-md-2 control-label">Full Name</label>
+        <div class="col-md-10">
+            <input type="text" id="FullName" name="FullName" class="form-control">
+        </div>
+    </div>
+
+    <!-- Email field -->
+    <div class="form-group">
+        <label for="Email" class="col-md-2 control-label">Email</label>
+        <div class="col-md-10">
+            <input type="text" id="Email" name="Email" class="form-control">
+        </div>
+    </div>
+
+    <!-- Password field -->
+    <div class="form-group">
+        <label for="Password" class="col-md-2 control-label">Password</label>
+        <div class="col-md-10">
+            <input type="password" id="Password" name="Password" class="form-control">
+        </div>
+    </div>
+
+    <!-- Confirm Password field -->
+    <div class="form-group">
+        <label for="ConfirmPassword" class="col-md-2 control-label">Confirm Password</label>
+        <div class="col-md-10">
+            <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="form-control">
+        </div>
+    </div>
+
+    <!-- Submit button -->
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" class="btn btn-default" value="Register">
+        </div>
+    </div>
+</form>
+
+<!-- Scripts -->
+<script src="/js/jquery-3.7.1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
