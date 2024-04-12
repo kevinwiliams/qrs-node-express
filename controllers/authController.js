@@ -86,7 +86,7 @@ const postRegister = async (req, res) => {
 // GET: /Account/ForgotPassword
 const getForgotPassword = (req, res) => {
     // Render the forgot password form
-    res.render('forgotpassword', { layout: 'layout' , title: 'Forgot Password'});
+    res.render('auth/forgotpassword', { layout: 'layout' , title: 'Forgot Password'});
 };
 
 // POST: /Account/ForgotPassword
@@ -94,7 +94,21 @@ const postForgotPassword = async (req, res) => {
     const { email } = req.body;
     try {
         // Implement your forgot password logic here
-        // Example: Send password reset email to the user
+        // Extract email from request body
+        const { email } = req.body;
+
+        // Check if email is valid
+        if (!email) {
+            return res.status(400).send('Email is required');
+        }
+
+       // Generate callback URL
+        const callbackUrl = `${req.protocol}://${req.get('host')}/auth/resetpassword`;
+
+        const subject = `Reset Password`;
+        const body = await Util.renderViewToString('./views/emails/passwordreset.hbs', dataToRender);
+        //const emailSent = await Util.sendMail(email, subject, body);
+  
         res.render('forgotpasswordconfirmation', { layout: 'layout' });
     } catch (error) {
         console.error(error);
