@@ -37,14 +37,14 @@ async function loadNewRetailers(id) {
             // Process the response
             for (const item of result) {
                 // console.log(item.EMAIL);
-                const isValid = isValidEmail(item.EMAIL);
-                console.log('isValid', isValid);
+                const isValid = await isValidEmail(item.EMAIL);
+                // console.log('isValid', isValid);
                 if (isValid) {
                     const isExist = await ac.isEmailExist(item.EMAIL);
-                    console.log('isExist', isExist);
+                    // console.log('isExist', isExist);
                     if (!isExist) {
                         const FullName = (item.FIRST_NAME === "null" ? null : item.FIRST_NAME) + " " + (item.LAST_NAME === "null" ? null : item.LAST_NAME) || (item.COMPANY === "null" ? null : item.COMPANY);
-                        console.log('FullName', FullName);
+                        // console.log('FullName', FullName);
                         // Hash the password
                         const password = "Password-01!";
                         const hashedPassword = await bcrypt.hash(password, 10);
@@ -109,7 +109,7 @@ async function loadNewRetailers(id) {
                         ]);
 
                         // Update CircproUsers with AddressID
-                        user.AddressID = address.id;
+                        user.AddressID = address.AddressID;
                         await user.save();
                     }
                 }
@@ -179,7 +179,7 @@ module.exports = {
 
     getNewUsers: async (req, res) => {
         try {
-            return res.json({ succcess: loadNewRetailers(req.body)});
+            return res.json({ success: await loadNewRetailers(req.body)});
         } catch (error) {
             console.error(error);
             // Handle errors
