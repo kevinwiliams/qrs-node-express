@@ -140,12 +140,31 @@ async function updateReturns(req, res) {
             let retStatus = 'Open';
             let returnCount = parseInt(returnAmount, 10);
             
-            pubEntry.ReturnAmount = returnCount;
-            pubEntry.Status = retStatus;
-            pubEntry.ReturnDate = moment().format('YYYY-MM-DD HH:mm:ss');
-            pubEntry.UpdatedAt = moment().format('YYYY-MM-DD HH:mm:ss');
-            
-            // Determine if the confirm amount should be updated based on the user role
+            if(userRole == 'Retailer'){
+                pubEntry.ReturnAmount = returnCount;
+                pubEntry.Status = retStatus;
+                pubEntry.ReturnDate = moment().format('YYYY-MM-DD HH:mm:ss');
+                pubEntry.UpdatedAt = moment().format('YYYY-MM-DD HH:mm:ss');
+                await pubEntry.save();
+
+                const userProfile = await getUserData(accountId);
+                
+                if(userProfile[0].NotifyEmail){
+                    // Combine user profile data with pubEntry data
+                    const dataToRender = {
+                        ...pubEntry.dataValues,
+                        userProfile: userProfile[0]
+                    };
+
+                    console.log('accountId', accountId);
+                    console.log('dataToRender', dataToRender);
+                    const subject = `QRS Returns Notification - ${accountId}`;
+                    const body = await Util.renderViewToString('./views/emails/confirmreturns_retailer.hbs', dataToRender);
+                    //const emailSent = await Util.sendMail('williamskt@jamaicabserver.com', subject, body);
+                }
+                
+            }
+
             if (userRole !== 'Retailer') {
                 retStatus = 'Closed';
                 returnCount = parseInt(confirmAmount, 10);
@@ -154,15 +173,23 @@ async function updateReturns(req, res) {
                 pubEntry.ConfirmDate = moment().format('YYYY-MM-DD HH:mm:ss');
                 pubEntry.Status = retStatus;
                 pubEntry.ConfirmReturn = true;
+
+                // Save changes to the database
+                await pubEntry.save();
+                // Send email notification
+                const userProfile = await getUserData(pubEntry.AccountID);
+                // Combine user profile data with pubEntry data
+                const dataToRender = {
+                    ...pubEntry.dataValues,
+                    userProfile: userProfile[0]
+                };
+
+                console.log('accountId', accountId);
+                console.log('dataToRender', dataToRender);
+                const subject = `QRS Returns Closed Notification - ${pubEntry.AccountID}`;
+                const body = await Util.renderViewToString('./views/emails/confirmreturn.hbs', dataToRender);
+                //const emailSent = await Util.sendMail('williamskt@jamaicabserver.com', subject, body);
             }
-            
-            // Save changes to the database
-            await pubEntry.save();
-            
-            // Send email notification
-            //const subject = `QRS Returns Notification - ${accountId}`;
-            //const body = await renderViewToString(req, res, 'Emails/ConfirmReturnRetailer', { distributionData: pubEntry });
-            //const emailSent = await Util.sendMail(loggedEmail, subject, body);
             
             // Update activity logs
             const qRSActivityLog = new QRSActivityLog({
@@ -264,21 +291,30 @@ function isInitLoad(accountID) {
     }
 }
 
-function getLatestDistDate(accountID) {
+async function getUserData(accountID) {
     try {
-        return CircProTranx.findOne({
-            where: { AccountID: accountID },
-            order: [['PublicationDate',
-            'DESC']],
-        })
-        .then(result => {
-            if (result) {
-                return result.PublicationDate ? new Date(result.PublicationDate).toISOString().split('T')[0] : null;
-            }
-            return null;
-        });
+        const sql = `SELECT DISTINCT
+                U.AccountID, 
+                U.DistributionID,
+                CONCAT(U.FirstName, ' ', U.LastName) AS RetailerName,
+                U.EmailAddress,
+                U.Company,
+                NULLIF(
+                    COALESCE(LTRIM(RTRIM(A.AddressLine1)) + ', ', '') + 
+                    COALESCE(LTRIM(RTRIM(A.AddressLine2)) + ', ', '') + 
+                    COALESCE(LTRIM(RTRIM(A.CityTown)), ''), 
+                    ''
+                ) AS RetailerAddress,
+                U.PhoneNumber,
+                U.CellNumber, U.NotifyEmail
+            FROM CircproUsers U
+            JOIN CircProAddresses A ON U.UserID = A.UserID
+            WHERE U.AccountID = '${accountID}'`;
+
+        return await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
+
     } catch (error) {
-        console.error('Error getting last distribution date:', error);
+        console.error('Error getting user data:', error);
         throw error;
     }
 }

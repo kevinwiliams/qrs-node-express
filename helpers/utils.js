@@ -1,4 +1,5 @@
 const fs = require('fs');
+const handlebars = require('handlebars');
 const util = require('util');
 const nodemailer = require('nodemailer');
 const { Pool } = require('pg');
@@ -91,7 +92,8 @@ async function logUserActivity(actLog) {
 
 async function sendMail(emailTo, subject, body) {
     try {
-        const jsonFile = await readFile('./email_settings.json');
+        
+        const jsonFile = await readFile('./app_data/email_settings.json');
         const settings = JSON.parse(jsonFile);
 
         const transporter = nodemailer.createTransport({
@@ -212,6 +214,17 @@ function getIPAddress(req) {
     return ipAddress;
 }
 
+async function renderViewToString(template, data){
+
+    const emailTemplateSource = fs.readFileSync(template, 'utf8');
+    // Compile the template
+    const emailTemplate = handlebars.compile(emailTemplateSource);
+
+    const emailHtml = emailTemplate(data);
+
+    return emailHtml;
+}
+
 module.exports = {
     fileHelper,
     logError,
@@ -222,5 +235,6 @@ module.exports = {
     isLocalIP,
     getBrowserName,
     getOSName,
-    getIPAddress
+    getIPAddress,
+    renderViewToString
 };
