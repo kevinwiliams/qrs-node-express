@@ -6,14 +6,14 @@
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <!-- Display Company, Address, Retailer information here -->
                             <h5 class="card-title mb-0">Account: {{AccountID}}</h5>
-                            <button type="button" class="btn btn-success btn-sm m-2" name="getLatest" id="getLatest"><i class="bi bi-box-arrow-in-down"></i> Update Pubs</button>
-                            <button type="button" class="btn btn-info btn-sm m-2" name="getLatestDraw" id="getLatestDraw"><i class="bi bi-box-arrow-in-down"></i> Update Draws</button>
+                            <button type="button" class="btn btn-success btn-sm m-2" name="getLatest" id="getLatest"><i class="bi bi-box-arrow-in-down"></i> Get Latest Pubs</button>
+                            <button type="button" class="btn btn-info btn-sm m-2" name="getLatestDraw" id="getLatestDraw"><i class="bi bi-box-arrow-in-down"></i> Get Latest Draw </button>
                         </div>
                         <div class="row small mb-3">
                         <div class="col-lg-9 col-md-8">
-                            {{Company}}<br>{{Address}}<br>{{Retailer}}
+                            {{Company}}<br>{{RetailerAddress}}<br>{{RetailerName}}
                             <span class="visually-hidden" id="moreDetails" name="moreDetails">
-                                <br>{{Email}}<br> {{Phone}}
+                                <br>{{EmailAddress}}<br> {{PhoneNumber}} / {{CellNumber}}
                             </span>
                         </div>
                     </div>

@@ -96,7 +96,7 @@ async function account(req, res) {
             res.render('distribution/account', {
                 layout: 'layout', // Specify the layout template
                 distributions: result,
-                AccountID: AccountID,
+                AccountID,
                 Company,
                 RetailerAddress,
                 RetailerName,
