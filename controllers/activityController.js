@@ -1,3 +1,4 @@
+const moment = require('moment');
 const QRSActivityLogs = require('../models/QRSActivityLogs');
 
 async function getIndex(req, res) {
@@ -29,7 +30,7 @@ async function getHistory(req, res) {
     try {
         // console.log('Params:', req.query);
         const userData = getUserData(req);
-        const parsedPubDate = new Date(req.query.pd);
+        const parsedPubDate = moment(req.query.pd).format('YYYY-MM-DD');
         const qRSActivityLogs = await QRSActivityLogs.findAll({
             where: {
                 AccountID: req.query.id,
@@ -41,7 +42,7 @@ async function getHistory(req, res) {
         res.render('activity/history', {
             layout: 'layout', // Specify the layout template
             qRSActivityLogs : JSON.parse(JSON.stringify(qRSActivityLogs)), 
-            publicationDate: parsedPubDate.toISOString(), 
+            publicationDate: parsedPubDate, 
             title: 'Account History',
             userData: userData });
     } catch (error) {

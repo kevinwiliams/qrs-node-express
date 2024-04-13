@@ -5,6 +5,7 @@ const AspNetUsers = require('../models/AspNetUsers');
 const CircproUsers = require('../models/CircproUsers'); 
 const CircProAddresses = require('../models/CircProAddresses'); 
 const bcrypt = require('bcrypt');
+const moment = require('moment');
 
 
 class TransactionData {
@@ -185,8 +186,35 @@ async function getProfile(accountId) {
 }
 
 function formatRelativeDate(date) {
-    // Implement your relative date formatting logic here
-    // Similar to the FormatRelativeDate function in C#
+    const now = moment();
+    const dateMoment = moment(date);
+
+    const diffMinutes = now.diff(dateMoment, 'minutes');
+    const diffHours = now.diff(dateMoment, 'hours');
+    const diffDays = now.diff(dateMoment, 'days');
+    const diffWeeks = now.diff(dateMoment, 'weeks');
+    const diffMonths = now.diff(dateMoment, 'months');
+    const diffYears = now.diff(dateMoment, 'years');
+
+    if (diffMinutes < 60) {
+        return `${diffMinutes} min`;
+    } else if (diffHours < 24) {
+        return `${diffHours} hrs`;
+    } else if (diffDays < 2) {
+        return "1 day";
+    } else if (diffDays < 7) {
+        return `${diffDays} days`;
+    } else if (diffWeeks < 2) {
+        return "1 week";
+    } else if (diffMonths < 1) {
+        return `${diffWeeks} weeks`;
+    } else if (diffMonths < 2) {
+        return "1 month";
+    } else if (diffYears < 1) {
+        return `${diffMonths} months`;
+    } else {
+        return `${diffYears} years`;
+    }
 }
 
 async function getChartDataQuery(aggregationType) {
