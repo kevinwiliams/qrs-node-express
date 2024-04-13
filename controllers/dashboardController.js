@@ -167,6 +167,16 @@ async function getProfile(accountId) {
         });
 
         const profile = result[0];
+        console.log('profile', profile);
+
+        // const profiled = await CircproUsers.findOne({
+        //     where: { AccountID: accountId },
+        //     include: [{
+        //         model: CircProAddresses, 
+        //         as: 'RetailerAddress'
+        //     }]
+        // });
+        // console.log('profiled', profiled);
         return profile;
     } catch (error) {
         console.error('Error:', error);

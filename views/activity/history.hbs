@@ -29,7 +29,7 @@
                                         <td>{{DistributionAmount}}</td>
                                         <td>{{ReturnAmount}}</td>
                                         <td><span class="badge {{#if (eq Status "Closed")}}bg-danger{{else}}bg-success{{/if}}">{{Status}}</span></td>
-                                        <td>{{CreatedAt}}</td>
+                                        <td>{{formatTimeDate CreatedAt}}</td>
                                     </tr>
                                 {{/each}}
                             </tbody>

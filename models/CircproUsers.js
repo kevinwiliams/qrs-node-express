@@ -78,7 +78,7 @@ const CircproUsers = sequelize.define('CircproUsers', {
 // Define association with CircProAddress
 CircproUsers.associate = function(models) {
     CircproUsers.hasMany(models.CircProAddresses, {
-        foreignKey: 'AddressID', // Assuming UserID is the foreign key in CircProAddress
+        foreignKey: 'UserID', // Assuming UserID is the foreign key in CircProAddress
         as: 'RetailerAddress' // Alias for the association
     });
 };

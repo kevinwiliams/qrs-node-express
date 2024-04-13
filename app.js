@@ -60,7 +60,7 @@ const hbs = exphbs.create({
             return moment(date).add(1, 'days').format('YYYY-MM-DD');
         },
         formatTimeDate: function(date) {
-            return moment(date).add(1, 'days').format('DD-MMM-YYYY h:mmA');
+            return moment(date).add(1, 'days').format('DD-MMM-YYYY h:mm A');
         },
         eq: function(arg1, arg2, options) {
             return Handlebars.helpers.eq(arg1, arg2, options);

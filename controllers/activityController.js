@@ -16,7 +16,7 @@ async function getLogs(req, res) {
             layout: 'layout', // Specify the layout template
             qRSActivityLogs: JSON.parse(JSON.stringify(qRSActivityLogs)), 
             title: 'History Logs',
-            ...userData 
+            userData : userData 
         });
 
     } catch (error) {
@@ -37,13 +37,13 @@ async function getHistory(req, res) {
             },
             order: [['CreatedAt', 'DESC']]
         });
-        console.log('qRSActivityLogs', qRSActivityLogs);
+        // console.log('qRSActivityLogs', qRSActivityLogs);
         res.render('activity/history', {
             layout: 'layout', // Specify the layout template
             qRSActivityLogs : JSON.parse(JSON.stringify(qRSActivityLogs)), 
             publicationDate: parsedPubDate.toISOString(), 
             title: 'Account History',
-            ...userData });
+            userData: userData });
     } catch (error) {
         console.error('Error fetching activity history:', error);
         res.status(500).send('Internal Server Error');

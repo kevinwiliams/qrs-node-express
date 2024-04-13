@@ -59,8 +59,9 @@ const CircProAddresses = sequelize.define('CircProAddresses', {
 });
 
 // Define association with CircproUsers
-CircProAddresses.belongsTo(CircproUsers, { foreignKey: 'AddressID' });
-
+CircProAddresses.associate = function(models) {
+    CircProAddresses.belongsTo(models.CircproUsers, { foreignKey: 'UserID' });
+}
 // Sync the model with the database
 sequelize.sync()
     .then(() => {
