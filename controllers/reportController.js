@@ -22,16 +22,16 @@ async function getSupervisorReport(req, res) {
          const supervisorNames = result
          .filter(u => u.UserName !== null && u.EmailAddress !== null)
          .reduce((acc, curr) => {
-             if (!acc[curr.EmailAddress]) {
-                 acc[curr.EmailAddress] = curr.UserName;
-             }
+            if (!acc[curr.UserName]) {
+                acc[curr.UserName] = curr.UserName;
+            }
              return acc;
          }, {});
 
      // Convert the grouped supervisors to an array of objects
-     const supervisorList = Object.entries(supervisorNames).map(([key, value]) => ({
-         Text: value,
-         Value: key
+     const supervisorList = Object.entries(supervisorNames).map(([name, email]) => ({
+         Text: name,
+         Value: email
      }));
 
         // Send the result as JSON response
@@ -60,6 +60,22 @@ async function filterSupervisorReport(req, res) {
             SELECT UserName, EmailAddress, AccountID, RetailerName, Company, RetailerAddress, PublicationDate, TotalReturnAmount, TotalDistributionAmount, CreatedAt
             FROM dbo.View_Supervisor_Report
         `;
+         // Execute the query
+         const resultSupes = await sequelize.query(sql, { type: QueryTypes.SELECT });
+         // Filter out null email addresses and group by email address
+        const supervisorNames = resultSupes
+        .filter(u => u.UserName !== null && u.EmailAddress !== null)
+        .reduce((acc, curr) => {
+            if (!acc[curr.UserName]) {
+                acc[curr.UserName] = curr.UserName;
+            }
+            return acc;
+        }, {});
+         // Convert the grouped supervisors to an array of objects
+         const supervisorList = Object.entries(supervisorNames).map(([key, value]) => ({
+            Text: value,
+            Value: key
+        }));
 
         // Construct the WHERE clause based on provided parameters
         const whereClause = [];
@@ -84,21 +100,9 @@ async function filterSupervisorReport(req, res) {
 
         // Execute the query with parameters
         const result = await sequelize.query(sql, { type: QueryTypes.SELECT, replacements: queryParams });
-        // Filter out null email addresses and group by email address
-        const supervisorNames = result
-        .filter(u => u.UserName !== null && u.EmailAddress !== null)
-        .reduce((acc, curr) => {
-            if (!acc[curr.EmailAddress]) {
-                acc[curr.EmailAddress] = curr.UserName;
-            }
-            return acc;
-        }, {});
+       
 
-        // Convert the grouped supervisors to an array of objects
-        const supervisorList = Object.entries(supervisorNames).map(([key, value]) => ({
-            Text: value,
-            Value: key
-        }));
+       
 
         // Send the result as JSON response
         //res.json(result);
