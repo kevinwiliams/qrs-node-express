@@ -1,0 +1,14 @@
+{
+    "email_address_from": "",
+    "smtp_host": "smtp.gmail.com",
+    "ssl_enabled": "true",
+    "email_password": "", 
+    "email_address": "",
+    "email_address_username": "",
+    "email_address_domain": "",
+    "email_port_number": "",
+    "bcc_closed": "",
+    "bcc_notify": "",
+    "dispute_email": ""
+  
+  }
