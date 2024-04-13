@@ -96,7 +96,7 @@ async function account(req, res) {
             res.render('distribution/account', {
                 layout: 'layout', // Specify the layout template
                 distributions: result,
-                AccountID: id,
+                AccountID: AccountID,
                 Company,
                 RetailerAddress,
                 RetailerName,
@@ -158,7 +158,7 @@ async function updateReturns(req, res) {
 
                     const subject = `QRS Returns Notification - ${accountId}`;
                     const body = await Util.renderViewToString('./views/emails/confirmreturns_retailer.hbs', dataToRender);
-                    //const emailSent = await Util.sendMail('williamskt@jamaicabserver.com', subject, body);
+                    const emailSent = await Util.sendMail('williamskt@jamaicaobserver.com', subject, body);
                 }
                 
             }
@@ -177,6 +177,7 @@ async function updateReturns(req, res) {
                 // Send email notification
                 const userProfile = await getUserData(pubEntry.AccountID);
                 // Combine user profile data with pubEntry data
+                pubEntry.dataValues.PublicationDate = moment(splitDate).format('MMM DD');
                 const dataToRender = {
                     ...pubEntry.dataValues,
                     userProfile: userProfile[0]
@@ -184,7 +185,7 @@ async function updateReturns(req, res) {
 
                 const subject = `QRS Returns Closed Notification - ${pubEntry.AccountID}`;
                 const body = await Util.renderViewToString('./views/emails/confirmreturn.hbs', dataToRender);
-                //const emailSent = await Util.sendMail('williamskt@jamaicabserver.com', subject, body);
+                const emailSent = await Util.sendMail('williamskt@jamaicaobserver.com', subject, body);
             }
             
             // Update activity logs
@@ -228,12 +229,24 @@ async function submitDispute(req, res) {
         if (!transaction) {
             return res.status(404).json({ success: false, message: 'Transaction not found' });
         }
-
         // Update IsDisputed flag
         transaction.IsDisputed = true;
-
         // Save changes to the database
         await transaction.save();
+
+        const userProfile = await getUserData(accountId);
+        const dataToRender = {
+            userProfile: userProfile[0],
+            RetailerNote: retailerNote,
+            PublicationDate: publicationDate,
+            DisputeAmount: disputeAmount,
+            DistributionAmount: drawAmount,
+            returnAmount
+        };
+
+        const subject = `QRS Draw Dispute - ${accountId}`;
+        const body = await Util.renderViewToString('./views/emails/drawdispute.hbs', dataToRender);
+        const emailSent = await Util.sendMail('williamskt@jamaicaobserver.com', subject, body);
 
         // Send appropriate response
         res.status(200).json({ success: true, message: 'Dispute submitted successfully' });
