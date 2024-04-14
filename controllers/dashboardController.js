@@ -346,26 +346,32 @@ async function postChangePassword(req, res){
         if(!req.session.isAuthenticated){
             res.redirect('/auth/login');
         }
-
-        const { oldPassword, newPassword } = req.body;
+        const { oldPassword, newPassword, confirmPassword } = req.body;
         const userData = req.session.userData;
 
-        const user = await AspNetUsers.findOne({ where: { Email: userData.Email } });
+        if (newPassword === confirmPassword) {
 
-        const isMatch = await bcrypt.compare(oldPassword, user.PasswordHash);
-        if(isMatch){
-            const result = await changePasswordDB(user.Id, newPassword);
+            const user = await AspNetUsers.findOne({ where: { Email: userData.Email } });
+            const isMatch = await bcrypt.compare(oldPassword, user.PasswordHash);
 
-            if (result.success) {
-                return res.redirect('/dashboard/changepassword?Message=ChangePasswordSuccess');
-            } else {
-                res.locals.errors = result.errors;
-                return res.render('dashboard/changepassword', { model: req.body, layout: 'layout'});
+            if(isMatch){
+                const result = await changePasswordDB(user.Id, newPassword);
+
+                if (result.success) {
+                    return res.render('dashboard/changepassword', {Message: 'ChangePasswordSuccess', layout: 'layout', userData: userData});
+                } else {
+                    res.locals.errors = result.errors;
+                    return res.render('dashboard/changepassword', { ...req.body, layout: 'layout', Message: result.errors, userData: userData});
+                }
+            } else{
+                
+                return res.render('dashboard/changepassword', { ...req.body, layout: 'layout', Message: 'Old password does not match!', userData: userData});
             }
         } else{
-            
-            return res.render('dashboard/changepassword', { model: req.body, layout: 'layout' });
+            return res.render('dashboard/changepassword', { ...req.body, layout: 'layout', Message: 'Passwords do not match!', userData: userData});
         }
+
+        
         
     } catch (error) {
         console.error('Error changing password:', error);
