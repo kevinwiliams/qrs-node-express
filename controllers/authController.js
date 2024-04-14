@@ -2,6 +2,7 @@ const sequelize = require('../config/db').sequelize;
 const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 // GET: /Account/Login
 const getLogin = (req, res) => {
@@ -15,7 +16,7 @@ const getLogin = (req, res) => {
 
 // POST: /Account/Login
 const postLogin = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, rememberMe} = req.body;
     try {
         // Query the database to find the user by username
         const result = await sequelize.query(`SELECT * FROM [dbo].[AspNetUsers] WHERE [UserName] = '${email}'`, { type: sequelize.QueryTypes.SELECT });
@@ -33,13 +34,13 @@ const postLogin = async (req, res) => {
         }
 
         const userInfo = await sequelize.query(`SELECT r.[Name] as Role, 
-        cu.AccountID, 
-        u.Email, cu.UserID
-        FROM [dbo].[AspNetUsers] u 
-        LEFT JOIN [dbo].[CircproUsers] cu ON u.Id = cu.UserID
-        JOIN [dbo].[AspNetUserRoles] ur on u.Id = ur.UserId
-        JOIN [dbo].[AspNetRoles] r on ur.RoleId = r.Id 
-        WHERE u.Email = '${email}'`, { type: sequelize.QueryTypes.SELECT });
+            cu.AccountID, 
+            u.Email, cu.UserID
+            FROM [dbo].[AspNetUsers] u 
+            LEFT JOIN [dbo].[CircproUsers] cu ON u.Id = cu.UserID
+            JOIN [dbo].[AspNetUserRoles] ur on u.Id = ur.UserId
+            JOIN [dbo].[AspNetRoles] r on ur.RoleId = r.Id 
+            WHERE u.Email = '${email}'`, { type: sequelize.QueryTypes.SELECT });
         const userData = userInfo[0];
 
         // Set user session
@@ -48,8 +49,18 @@ const postLogin = async (req, res) => {
             req.session.user.role = userData.Role;
             req.session.user.accountId = userData.AccountID;
             req.session.user.userId = userData.UserID;
+        } else{
+            res.render('auth/login', { error: 'User not found' ,  layout: 'blank'});
+            return;
         }
-        // console.log('req.session.user', req.session.user);
+
+         // Create JWT token
+         const token = jwt.sign({ userId: userData.Id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        // Set remember me cookie if selected
+        if (rememberMe) {
+            res.cookie('remember_me', token, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+        }
 
         req.session.isAuthenticated = true;
         res.redirect('/dashboard'); // Redirect to home page

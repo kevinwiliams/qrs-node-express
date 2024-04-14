@@ -7,6 +7,8 @@ const Handlebars = require('handlebars');
 const exphbs = require('express-handlebars');
 const { sql, connectDB } = require('./config/db');
 const moment = require('moment'); // Import moment for date formatting
+const cookieParser = require('cookie-parser');
+const checkRememberMe = require('./middleware/checkRememberMe');
 
 const app = express();
 // app.enable('view cache');
@@ -16,6 +18,9 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
+
+app.use(cookieParser());
+app.use(checkRememberMe);
 
 // Custom middleware to make session object available globally
 app.use((req, res, next) => {
