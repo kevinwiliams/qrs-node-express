@@ -97,7 +97,7 @@
                 
                 {{#if (eq userData.UserRole "Retailer")}}
                     <li class="nav-item">
-                        <a class="nav-link collapsed" href="/">
+                        <a class="nav-link collapsed" href="/" id="account-link">
                             <i class="bi bi-grid"></i>
                             <span>Home</span>
                         </a>
@@ -105,7 +105,7 @@
                 {{/if}}
                 {{#if (eq userData.UserRole "Supervisor")}}
                     <li class="nav-item">
-                        <a class="nav-link collapsed" href="{{retailerUrl}}">
+                        <a class="nav-link collapsed" href="/retailer" id="retailer-link">
                             <i class="bi bi-grid"></i>
                             <span>Home</span>
                         </a>
@@ -206,11 +206,12 @@
             else if (currentUrl === '/report/supervisor') {
                 $('#supervisors-link').addClass('active');
                 $('#tables-nav').removeClass('collapse');
-
             } else if (currentUrl === '/report/transactions') {
                 $('#transactions-link').addClass('active');
                 $('#tables-nav').removeClass('collapse');
-            }
+            } else if (currentUrl.includes('/account/')) {
+                $('#account-link').removeClass('collapsed');
+            } 
         });
     </script>
 </body>
