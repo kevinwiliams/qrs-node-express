@@ -113,13 +113,13 @@
                 {{/if}}
                 {{#if (or (eq userData.UserRole "Circulation") (eq userData.UserRole "Admin"))}}
                     <li class="nav-item">
-                        <a class="nav-link collapsed" href="/dashboard">
+                        <a class="nav-link collapsed" href="/dashboard" id="dashboard-link">
                             <i class="bi bi-grid"></i>
                             <span>Dashboard</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link collapsed" href="/retailer">
+                        <a class="nav-link collapsed" href="/retailer" id="retailer-link">
                             <i class="bi bi-layout-text-window-reverse"></i>
                             <span>Agents</span>
                         </a>
@@ -130,13 +130,13 @@
                         </a>
                         <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav" style="">
                             <li>
-                                <a class="nav-link collapsed" href="/report/supervisor">
+                                <a class="nav-link collapsed" href="/report/supervisor" id="supervisors-link">
                                     <i class="bi bi-layout-text-window-reverse"></i>
                                     <span>Supervisors</span>
                                 </a>
                             </li>
                             <li>
-                                <a class="nav-link collapsed" href="/report/transactions">
+                                <a class="nav-link collapsed" href="/report/transactions" id="transactions-link">
                                     <i class="bi bi-layout-text-window-reverse"></i>
                                     <span>Transactions</span>
                                 </a>
@@ -189,6 +189,29 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/v/bs5/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-html5-2.3.6/b-print-2.3.6/r-2.4.1/sb-1.4.2/sp-2.1.2/datatables.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Get the current URL
+            var currentUrl = window.location.pathname;
 
+            // Remove the collapsed class from all navigation links initially
+            //$('.nav-link').removeClass('collapsed');
+
+            // Check if the current URL matches specific paths and remove the collapsed class accordingly
+            if (currentUrl === '/dashboard') {
+                $('#dashboard-link').removeClass('collapsed');
+            } else if (currentUrl === '/retailer') {
+                $('#retailer-link').removeClass('collapsed');
+            } // Check if the current URL matches specific paths and remove the collapsed class accordingly
+            else if (currentUrl === '/report/supervisor') {
+                $('#supervisors-link').addClass('active');
+                $('#tables-nav').removeClass('collapse');
+
+            } else if (currentUrl === '/report/transactions') {
+                $('#transactions-link').addClass('active');
+                $('#tables-nav').removeClass('collapse');
+            }
+        });
+    </script>
 </body>
 </html>
