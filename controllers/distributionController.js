@@ -458,6 +458,7 @@ module.exports = {
     updateReturns,
     submitDispute,
     getLatest,
-    getLatestDraw
+    getLatestDraw,
+    getUserData
 };
 

@@ -49,6 +49,7 @@ async function loadNewRetailers(id) {
                         const password = "Password-01!";
                         const hashedPassword = await bcrypt.hash(password, 10);
                         const uuid = generateUUID();
+                        const security = generateUUID();
 
                         // Create application user
                         const newAccount = await AspNetUsers.create({
@@ -62,7 +63,7 @@ async function loadNewRetailers(id) {
                             TwoFactorEnabled: false,
                             LockoutEnabled: false,
                             AccessFailedCount: 0,
-
+                            SecurityStamp: security
                         });
                 
                         // Assign user role based on email domain

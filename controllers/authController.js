@@ -3,6 +3,10 @@ const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const AspNetUsers = require('../models/AspNetUsers');
+const Distro = require('../controllers/distributionController');
+const CircproUsers = require('../models/CircproUsers');
+const Util = require('../helpers/utils');
 
 // GET: /Account/Login
 const getLogin = (req, res) => {
@@ -102,25 +106,34 @@ const getForgotPassword = (req, res) => {
 
 // POST: /Account/ForgotPassword
 const postForgotPassword = async (req, res) => {
-    const { email } = req.body;
     try {
         // Implement your forgot password logic here
         // Extract email from request body
         const { email } = req.body;
-
         // Check if email is valid
         if (!email) {
             return res.status(400).send('Email is required');
         }
 
-       // Generate callback URL
-        const callbackUrl = `${req.protocol}://${req.get('host')}/auth/resetpassword`;
-
-        const subject = `Reset Password`;
-        const body = await Util.renderViewToString('./views/emails/passwordreset.hbs', dataToRender);
-        //const emailSent = await Util.sendMail(email, subject, body);
+        const user = await AspNetUsers.findOne({ where: { Email: email } });
+        console.log('user', user);
+        if (user) {
+            // Generate callback URL
+            const code = user.SecurityStamp;
+            const callbackUrl = `${req.protocol}://${req.get('host')}/auth/resetpassword?code=${code}`;
+            const dataToRender = {
+                CallBackUrl: callbackUrl
+            };
+            const subject = `Reset Password`;
+            const body = await Util.renderViewToString('./views/emails/passwordreset.hbs', dataToRender);
+            const emailSent = await Util.sendMail(email, subject, body);
   
-        res.render('auth/forgotpasswordconfirmation', { layout: 'layout' });
+            res.render('auth/forgotpasswordconfirmation', { layout: 'layout' });
+        }else{
+            res.render('auth/forgotpassword', { layout: 'layout' });
+        }
+
+       
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
@@ -129,18 +142,44 @@ const postForgotPassword = async (req, res) => {
 
 // GET: /Account/ResetPassword
 const getResetPassword = (req, res) => {
-    const { code } = req.params;
+    const { code } = req.query;
     // Render the reset password form with the code parameter
     res.render('auth/resetpassword', { code,  layout: 'layout', title: 'Reset Password'});
 };
 
 // POST: /Account/ResetPassword
 const postResetPassword = async (req, res) => {
-    const { email, code, password } = req.body;
+    const { email, code, password, confirmPassword } = req.body;
     try {
+
+        if (password === confirmPassword) {
+
+            const user = await AspNetUsers.findOne({ where: { Email: email, SecurityStamp: code } });
+            if (user) {
+                const isMatch = await bcrypt.compare(password, user.PasswordHash);
+
+                if(isMatch){
+                    const result = await changePasswordDB(user.Id, password);
+
+                    if (result.success) {
+                        return res.render('auth/resetpassword', {Message: 'ChangePasswordSuccess', layout: 'layout'});
+                    } else {
+                        res.locals.errors = result.errors;
+                        return res.render('auth/resetpassword', { ...req.body, layout: 'layout', Message: result.errors});
+                    }
+                } else{
+                    
+                    return res.render('auth/resetpassword', { ...req.body, layout: 'layout', Message: 'Old password does not match!'});
+                }
+            }
+            
+        } else{
+            return res.render('auth/resetpassword', { ...req.body, layout: 'layout', Message: 'Passwords do not match!'});
+        }
+
         // Implement your reset password logic here
         // Example: Reset user's password in the database
-        res.render('resetpasswordconfirmation', { layout: 'layout' });
+        res.render('auth/resetpassword', { layout: 'layout' });
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
@@ -163,6 +202,25 @@ const postLogout = (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
+    }
+};
+
+async function changePasswordDB(userId, newPassword) {
+    try {
+        // Find the user by userId
+        const user = await AspNetUsers.findByPk(userId);
+        if (!user) {
+            return { success: false, errors: ['User not found'] };
+        }
+        // Update the user's password hash
+        user.PasswordHash = await bcrypt.hash(newPassword, 10);
+        // Save the updated user
+        await user.save();
+
+        return { success: true };
+    } catch (error) {
+        console.error('Error changing password:', error);
+        return { success: false, errors: ['Internal Server Error'] };
     }
 };
 
