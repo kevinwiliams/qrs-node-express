@@ -65,23 +65,22 @@
                             <div class="row">
                                 <div class="col-lg-3 col-md-4 label">Address</div>
                                 <div class="col-lg-9 col-md-8">{{profile.RetailerAddress}}</div>
-
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Phone</div>
-                                    <div class="col-lg-9 col-md-8">&nbsp;{{profile.PhoneNumber}}</div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Cell</div>
-                                    <div class="col-lg-9 col-md-8">&nbsp;{{profile.CellNumber}}</div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 label">Email</div>
-                                    <div class="col-lg-9 col-md-8">{{profile.EmailAddress}}</div>
-                                </div>
-
                             </div>
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Phone</div>
+                                <div class="col-lg-9 col-md-8">&nbsp;{{profile.PhoneNumber}}</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Cell</div>
+                                <div class="col-lg-9 col-md-8">&nbsp;{{profile.CellNumber}}</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Email</div>
+                                <div class="col-lg-9 col-md-8">{{profile.EmailAddress}}</div>
+                            </div>
+
                         </div>
 
                         <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
@@ -96,7 +95,7 @@
                                 <div class="row mb-3 visually-hidden">
                                     <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
                                     <div class="col-md-8 col-lg-9">
-                                        <img src="/assets/img/profile-pic.jpg" alt="Profile">
+                                        <img src="/img/profile-pic.jpg" alt="Profile">
                                         <div class="pt-2">
                                             <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></a>
                                             <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>
@@ -231,5 +230,6 @@
     </div>
 </section>
 
-
+<!-- Scripts -->
+<script src="/js/jquery-3.7.1.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
