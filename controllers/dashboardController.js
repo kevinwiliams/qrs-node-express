@@ -348,23 +348,23 @@ async function postChangePassword(req, res){
         }
 
         const { oldPassword, newPassword } = req.body;
+        const userData = req.session.userData;
 
-        const user = await AspNetUsers.findOne({ where: { Email: req.session.userData.Email } });
-        const hashedPassword = await bcrypt.hash(oldPassword, 10);
-        const isMatch = await bcrypt.compare(hashedPassword, user.PasswordHash);
+        const user = await AspNetUsers.findOne({ where: { Email: userData.Email } });
 
+        const isMatch = await bcrypt.compare(oldPassword, user.PasswordHash);
         if(isMatch){
-            const result = await changePasswordDB(user.UserId, newPassword);
+            const result = await changePasswordDB(user.Id, newPassword);
 
             if (result.success) {
                 return res.redirect('/dashboard/changepassword?Message=ChangePasswordSuccess');
             } else {
                 res.locals.errors = result.errors;
-                return res.render('dashboard/changepassword', { model: req.body });
+                return res.render('dashboard/changepassword', { model: req.body, layout: 'layout'});
             }
         } else{
             
-            return res.render('dashboard/changepassword', { model: req.body });
+            return res.render('dashboard/changepassword', { model: req.body, layout: 'layout' });
         }
         
     } catch (error) {
@@ -380,10 +380,8 @@ async function changePasswordDB(userId, newPassword) {
         if (!user) {
             return { success: false, errors: ['User not found'] };
         }
-
         // Update the user's password hash
         user.PasswordHash = await bcrypt.hash(newPassword, 10);
-
         // Save the updated user
         await user.save();
 
