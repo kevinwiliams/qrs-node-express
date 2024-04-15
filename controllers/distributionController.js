@@ -216,7 +216,7 @@ async function updateReturns(req, res) {
 
 async function submitDispute(req, res) {
     try {
-        const { accountId, returnAmount, disputeDrawAmount, disputeAmount, disputePublicationDate, loggedEmail, userRole, retailerNote } = req.body;
+        const { accountId, returnAmount, disputeDrawAmount, disputeAmount, disputePublicationDate, disputeEmail, userRole, retailerNote } = req.body;
         const publicationDate = moment(disputePublicationDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
         // Find the transaction entry based on accountId and publicationDate
         const transaction = await CircProTranx.findOne({ 
@@ -246,7 +246,7 @@ async function submitDispute(req, res) {
 
         const subject = `QRS Draw Dispute - ${accountId}`;
         const body = await Util.renderViewToString('./views/emails/drawdispute.hbs', dataToRender);
-        const emailSent = await Util.sendMail('williamskt@jamaicaobserver.com', subject, body);
+        const emailSent = await Util.sendMail(disputeEmail, subject, body);
 
         // Send appropriate response
         res.status(200).json({ success: true, message: 'Dispute submitted successfully' });
