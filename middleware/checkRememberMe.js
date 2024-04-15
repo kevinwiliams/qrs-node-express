@@ -8,7 +8,7 @@ const checkRememberMe = async (req, res, next) => {
     if (token) {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            const user = await AspNetUsers.findById(decoded.userId);
+            const user = await AspNetUsers.findByPk(decoded.userId);
 
             if (user) {
                 req.user = user;
