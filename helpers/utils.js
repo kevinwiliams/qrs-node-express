@@ -105,13 +105,21 @@ async function sendMail(emailTo, subject, body) {
                 pass: settings.email_password
             }
         });
-
+        
         const mailOptions = {
             from: `"${settings.email_address_from}" <${settings.email_address}>`,
             to: emailTo,
             subject: subject,
             html: body
         };
+
+        if (subject.includes('Returns') && subject.includes('Confirmation')) {
+            mailOptions.cc = settings.bcc_closed;
+        }
+
+        if (subject.includes('Dispute')) {
+            mailOptions.cc = settings.dispute_email;
+        }
 
         await transporter.sendMail(mailOptions);
 
