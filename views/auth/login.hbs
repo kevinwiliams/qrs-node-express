@@ -29,7 +29,7 @@
 
                             <div class="col-12">
                                 <div class="form-floating">
-                                    <input type="email" name="email" class="form-control" placeholder="Your Email" required>
+                                    <input type="email" name="email" class="form-control" placeholder="Your Email" required="true" autocomplete="off">
                                     <label for="email" class="">Email</label>
                                     {{#if errors}}
                                         {{{validationMessage field='email' errors=errors}}}
@@ -39,7 +39,7 @@
 
                             <div class="col-12">
                                 <div class="form-floating">
-                                    <input type="password" name="password" class="form-control" placeholder="Your Password" required>
+                                    <input type="password" name="password" class="form-control" placeholder="Your Password" required="true" autocomplete="off">
                                     <label for="password" class="">Password</label>
                                     {{#if errors}}
                                         {{{validationMessage field='password' errors=errors}}}

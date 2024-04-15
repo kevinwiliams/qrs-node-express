@@ -6,12 +6,12 @@
                 <button type="button" class="btn-close btn-lg" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="disputeForm" name="disputeForm" role="form" method="POST" class="g-3 needs-validation" data-request-url="{{submitDisputeUrl}}">
+                <form id="disputeForm" name="disputeForm" role="form" method="POST" class="g-3 needs-validation" data-request-url="/distribution/submitdispute">
                     <div class="form-group m-2">
                         Draw: <span class="showDrawCnt"></span>
                         <input type="hidden" class="form-control" id="disputePublicationDate" name="disputePublicationDate">
                         <input type="hidden" class="form-control" id="disputeDrawAmount" name="disputeDrawAmount">
-                        <input type="hidden" class="form-control" id="accountId" name="accountId" value="{{AccountId}}">
+                        <input type="hidden" class="form-control" id="accountId" name="accountId" value="{{userData.AccountId}}">
                         <input type="hidden" class="form-control" id="userRole" name="userRole" value="{{userData.UserRole}}">
                         <input type="hidden" class="form-control" id="loggedEmail" name="loggedEmail" value="{{userData.Email}}">
                     </div>

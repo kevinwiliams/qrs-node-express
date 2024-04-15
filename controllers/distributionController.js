@@ -216,8 +216,8 @@ async function updateReturns(req, res) {
 
 async function submitDispute(req, res) {
     try {
-        const { accountId, returnAmount, drawAmount, disputeAmount, publicationDate, loggedEmail, userRole, retailerNote } = req.body;
-
+        const { accountId, returnAmount, disputeDrawAmount, disputeAmount, disputePublicationDate, loggedEmail, userRole, retailerNote } = req.body;
+        const publicationDate = moment(disputePublicationDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
         // Find the transaction entry based on accountId and publicationDate
         const transaction = await CircProTranx.findOne({ 
             where: { 
@@ -240,7 +240,7 @@ async function submitDispute(req, res) {
             RetailerNote: retailerNote,
             PublicationDate: publicationDate,
             DisputeAmount: disputeAmount,
-            DistributionAmount: drawAmount,
+            DistributionAmount: disputeDrawAmount,
             returnAmount
         };
 
