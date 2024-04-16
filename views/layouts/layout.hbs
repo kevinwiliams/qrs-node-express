@@ -45,6 +45,14 @@
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
+                             {{#if (eq userData.UserRole "Admin")}}
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center" href="/auth/register">
+                                    <i class="bi bi-person"></i>
+                                    <span>Register User</span>
+                                </a>
+                            </li>
+                            {{/if}}
                             {{#if (eq userData.UserRole "Retailer")}}
                             <li>
                                 <a class="dropdown-item d-flex align-items-center" href="/dashboard/profile">
@@ -154,7 +162,7 @@
                 <h1>{{title}}</h1>
                 <nav>
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{homeUrl}}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
                     </ol>
                 </nav>
             </div><!-- End Page Title -->

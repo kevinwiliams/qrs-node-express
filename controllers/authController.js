@@ -4,9 +4,16 @@ const session = require('express-session');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const AspNetUsers = require('../models/AspNetUsers');
+const AspNetUserRoles = require('../models/AspNetUserRoles');
+const AspNetRoles = require('../models/AspNetRoles');
 const Distro = require('../controllers/distributionController');
 const CircproUsers = require('../models/CircproUsers');
 const Util = require('../helpers/utils');
+const { v4: uuidv4 } = require('uuid');
+
+function generateUUID() {
+    return uuidv4();
+}
 
 // GET: /Account/Login
 const getLogin = (req, res) => {
@@ -77,23 +84,61 @@ const postLogin = async (req, res) => {
 };
 
 // GET: /Account/Register
-const getRegister = (req, res) => {
+const getRegister = async (req, res) => {
+
+    if (!req.session.isAuthenticated) {
+        res.redirect('/auth/login');
+    }
+
+    const roles = await AspNetRoles.findAll();
     // Render the registration form
-    res.render('auth/register', { layout: 'layout', title: 'Register'});
+    res.render('auth/register', { layout: 'layout', title: 'Register', roles:  roles, userData: req.session.userData});
 };
 
 // POST: /Account/Register
 const postRegister = async (req, res) => {
-    const { email, password, fullName, roleName } = req.body;
     try {
-        // Implement your user registration logic here
-        // Example: Create user in the database
-        const newUser = { id: users.length + 1, email, password, fullName, roleName };
-        users.push(newUser);
-        req.session.user = newUser; // Example: Set user session after registration
-        res.redirect('/');
+        const { email, fullName, password, confirmPassword, roleName } = req.body;
+
+        // Check if passwords match
+        if (password !== confirmPassword) {
+            return res.status(400).send('Passwords do not match');
+        }
+
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create user in the database
+        const user = await AspNetUsers.create({
+            Id: generateUUID(),
+            UserName: email,
+            Email: email,
+            FullName: fullName,
+            PasswordHash: hashedPassword,
+            SecurityStamp: generateUUID(),
+            EmailConfirmed : true,
+            PhoneNumberConfirmed : false,
+            TwoFactorEnabled : false,
+            LockoutEnabled : false,
+            AccessFailedCount : 0
+        });
+
+        // Find role by name
+        // const role = await AspNetRoles.findOne({ where: { Name: roleName } });
+        // if (!role) {
+        //     return res.status(404).send('Role not found');
+        // }
+
+        // Associate role with user in the AspNetUserRoles table
+        await AspNetUserRoles.create({
+            UserId: user.Id, // Assuming your user model has a field Id
+            RoleId: roleName // Assuming your role model has a field Id
+        });
+
+        // Redirect to home page after successful registration
+        res.redirect('/auth/register');
     } catch (error) {
-        console.error(error);
+        console.error('Error registering user:', error);
         res.status(500).send('Internal Server Error');
     }
 };

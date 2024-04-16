@@ -5,64 +5,63 @@
 
 <!-- Form -->
 <form action="/auth/register" method="POST" class="form-horizontal" role="form">
-    {{ csrfToken }} <!-- CSRF token -->
 
     <!-- RoleName field -->
     <div class="form-group">
-        <label for="RoleName" class="col-md-2 control-label">Role Name</label>
+        <label for="roleName" class="col-md-2 control-label">Role Name</label>
         <div class="col-md-10">
-            <select id="RoleName" name="RoleName" class="form-control">
+            <select id="roleName" name="roleName" class="form-control" required>
+                <option value="">Select Role</option>
                 {{#each roles}}
-                <option value="{{ this.value }}">{{ this.text }}</option>
+                <option value="{{ this.dataValues.Id }}">{{ this.dataValues.Name }}</option>
                 {{/each}}
             </select>
+        </div>
+    </div>
+     <!-- FullName field -->
+    <div class="form-group">
+        <label for="fullName" class="col-md-2 control-label">Full Name</label>
+        <div class="col-md-10">
+            <input type="text" id="fullName" name="fullName" class="form-control" required>
         </div>
     </div>
 
     <!-- UserName field -->
     <div class="form-group">
-        <label for="UserName" class="col-md-2 control-label">User Name</label>
+        <label for="userName" class="col-md-2 control-label">User Name</label>
         <div class="col-md-10">
-            <input type="text" id="UserName" name="UserName" class="form-control">
-        </div>
-    </div>
-
-    <!-- FullName field -->
-    <div class="form-group">
-        <label for="FullName" class="col-md-2 control-label">Full Name</label>
-        <div class="col-md-10">
-            <input type="text" id="FullName" name="FullName" class="form-control">
+            <input type="text" id="userName" name="userName" class="form-control" required>
         </div>
     </div>
 
     <!-- Email field -->
     <div class="form-group">
-        <label for="Email" class="col-md-2 control-label">Email</label>
+        <label for="email" class="col-md-2 control-label">Email</label>
         <div class="col-md-10">
-            <input type="text" id="Email" name="Email" class="form-control">
+            <input type="text" id="email" name="email" class="form-control" required>
         </div>
     </div>
 
     <!-- Password field -->
     <div class="form-group">
-        <label for="Password" class="col-md-2 control-label">Password</label>
+        <label for="password" class="col-md-2 control-label">Password</label>
         <div class="col-md-10">
-            <input type="password" id="Password" name="Password" class="form-control">
+            <input type="password" id="password" name="password" class="form-control" required>
         </div>
     </div>
 
     <!-- Confirm Password field -->
     <div class="form-group">
-        <label for="ConfirmPassword" class="col-md-2 control-label">Confirm Password</label>
+        <label for="confirmPassword" class="col-md-2 control-label">Confirm Password</label>
         <div class="col-md-10">
-            <input type="password" id="ConfirmPassword" name="ConfirmPassword" class="form-control">
+            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required>
         </div>
     </div>
 
     <!-- Submit button -->
     <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Register">
+        <div class="col-md-offset-2 col-md-10 py-4">
+            <input type="submit" class="btn btn-primary" value="Register User">
         </div>
     </div>
 </form>
